@@ -1,8 +1,21 @@
 const express = require("express");
 const app = express();
-
+const cors = require('cors')
+const dotenv = require('dotenv')
 const port = 5000;
 
+
+dotenv.config(); //process.env available
+
+app.use(express.json())
+app.use(cors())
+
+//Routes import
+const authRoutes = require('./src/routes/authRoutes')
+
+
+//Use routes
+app.use('/api/auth', authRoutes)
 
 app.get("/api", (req, res) => {
     const message = req.query.message;
@@ -32,6 +45,8 @@ app.get("/api/research_papers", (req, res) => {
 
     res.json(temp_res)
 })
+
+
 
 
 
