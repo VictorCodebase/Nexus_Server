@@ -13,11 +13,15 @@ app.use(cors())
 //Routes import
 const authRoutes = require('./src/routes/authRoutes')
 const paperRoutes = require('./src/routes/paperRoutes')
+const categoryRoutes = require('./src/routes/categoryRoutes')
+const tagRoutes = require('./src/routes/tagRoutes')
 
 
 //Use routes
 app.use('/api/auth', authRoutes)
 app.use('/api/papers', paperRoutes)
+app.use('/api/categories', categoryRoutes)
+app.use('/api/tags', tagRoutes)
 
 app.get("/api", (req, res) => {
     const message = req.query.message;
