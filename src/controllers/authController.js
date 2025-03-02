@@ -10,8 +10,8 @@ const register = (req, res) => {
 const login = (req, res) => {
 	const { email, password } = req.body;
 	test_user = {
-		id: 1,
-		role: "admin",
+		id: 2,
+		role: "author",
 		email: "sample@mail.com",
 		password: "32fsfsd3232eddd2e32dweedwscr2323e4rfresrw34ouh3freu", //Some hashed value
 	};

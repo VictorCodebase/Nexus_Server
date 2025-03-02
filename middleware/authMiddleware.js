@@ -4,10 +4,7 @@ const verifyToken = (req, res, next) => {
 	const authHeader = req.header("Authorization");
 	if (!authHeader) return res.status(401).json({ message: "Access denied, no authorization token provided." });
 
-	console.log("auth header: ", authHeader);
 	token = authHeader.split(" ")[1]; // remove the bearer bit
-	console.log("token:",token);
-
 	if (!token) {
 		return res.status(401).json({ message: "Access denied, invalid token format." });
 	}
@@ -15,7 +12,7 @@ const verifyToken = (req, res, next) => {
 	try {
 		const verified = jwt.verify(token, process.env.JWT_SECRET);
 		req.user = verified;
-        console.log("Verified: ", req.user)
+		console.log("Verified: ", req.user);
 		next();
 	} catch (err) {
 		res.status(403).json({ message: "Invalid token" });
@@ -42,10 +39,9 @@ const checkRole = (roles) => {
 			}
 
 			next();
+		} else if (req.user.role === "admin") {
+			return next();
 		}
-        else if (req.user.role === "admin"){
-            return next();
-        }
 	};
 };
 
