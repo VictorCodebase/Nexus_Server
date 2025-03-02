@@ -7,8 +7,7 @@ const verifyToken = (req, res, next) => {
 	try {
 		const verified = jwt.verify(token, process.env.JWT_SECRET);
 		req.user = verified;
-		next(); //! How the hell does this work
-		// I think next is a callback function passed in the arguments
+		next();
 	} catch (err) {
 		res.status(403).json({ message: "Invalid token" });
 	}
@@ -19,7 +18,24 @@ const checkRole = (roles) => {
 		if (!req.user || !roles.includes(req.user.role)) {
 			return res.status(403).json({ message: "Forbidden: You do not have access" });
 		}
-		next();
+        
+        if (req.user.role === 'author') {
+            // TODO: Fetch paper from db
+            const test_paper = {
+                authorId: 1
+            }
+            if (!test_paper){
+                return res.status(404).json({'message': 'Requested resource does not exist'})
+            }
+
+            if (test_paper.authorId !== req.params.id) {
+                return res.status(403).json({'message': 'Forbidden: You can only modify your papers'})
+            }
+
+            next();
+
+        }
+
 	};
 };
 
