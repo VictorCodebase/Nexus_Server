@@ -1,16 +1,17 @@
 const db = require('../config/db')
 
 const createUser = (lname, fname, email, password) => {
-    const stmt = db.prepare("INSERT INTO users (fname, lname, email, password) VALUES(?, ?, ?, ?)")
+    const stmt = db.prepare("INSERT INTO users (fname, lname, role, email, password) VALUES(?, ?, ?, ?, ?)")
     return stmt.run(fname, lname, email, password)
 } 
 
-const readUsers = () => {
-    const stmt = db.prepare("SELECT FROM users")
-    return stmt.run()
+const readUser = (email) => {
+    const stmt = db.prepare("SELECT * FROM users WHERE email = ? AND password = ?");
+    return stmt.get(email, password)
 }
+
 
 module.exports = {
     createUser,
-    readUsers
+    readUser
 }

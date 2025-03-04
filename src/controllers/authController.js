@@ -1,15 +1,28 @@
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 const userModel = require("../models/userModel");
 
 const register = (req, res) => {
-	const { fname, lname, email, password } = req.body;
-	userModel.createUser(fname, lname, email, password);
+	const { fname, lname, email , password } = req.body;
+	const role = 'Author' //
+	if (userModel.readUser(email)){
+		return res.status(400).json({message: "User email already exists"})
+	}
 
-	res.status(200).json({ message: "Success: User register" });
-
-	const users = userModel.readUsers
-	console.log("Users: ", users)
+	userModel.createUser(fname, lname, email, role, password);
+	res.status(201).json({ message: "Success: User register" });
 };
+
+const registerAdmin = (req, res) => {
+	const {fname, lname, email, password} = req.body;
+
+	const role = 'Admin'
+	if (userModel.readUser(email)){
+		return res.status(400).json({message: 'User email aready exists'})
+	}
+
+	userModel.createUser(fname, lname, email, role, admin)
+}
 
 const login = (req, res) => {
 	const { email, password } = req.body;
@@ -19,12 +32,13 @@ const login = (req, res) => {
 		email: "sample@mail.com",
 		password: "32fsfsd3232eddd2e32dweedwscr2323e4rfresrw34ouh3freu", //Some hashed value
 	};
+	const user = userModel.readUser(email)
 
-	if (!test_user || !verifyPassword(password, test_user.password)) {
-		return res.status(401).json({ message: "invalid credentials" });
+	if (!user || !bcrypt.compareSync(password, user.password)){
+		return res.status(401).json({message: "Invalid credentials"})
 	}
 
-	const token = jwt.sign({ id: test_user.id, role: test_user.role }, process.env.JWT_SECRET, { expiresIn: "1d" });
+	const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1d" });
 
 	res.json({ token });
 };
@@ -48,14 +62,5 @@ module.exports = {
 	login,
 	logout,
 	getUser,
-};
-
-const verifyPassword = (password, userHashedPassword) => {
-	// Perform checks of input and hashed value from db
-	unhashedPassword = "password";
-	if (password !== unhashedPassword) {
-		return false;
-	}
-
-	return true;
+	registerAdmin
 };

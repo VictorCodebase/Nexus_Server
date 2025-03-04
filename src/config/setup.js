@@ -8,6 +8,7 @@ function setupDb() {
 				fname TEXT NOT NULL,
 				lname TEXT NOT NULL, 
 				email TEXT UNIQUE NOT NULL,
+				role TEXT NOT NULL,
 				password TEXT NOT NULL
 			);
 
@@ -18,4 +19,4 @@ function setupDb() {
 	}
 }
 
-module.exports = {setupDb};
+module.exports = { setupDb };
