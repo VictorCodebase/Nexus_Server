@@ -1,65 +1,46 @@
 const express = require("express");
 const app = express();
-const cors = require('cors')
-const dotenv = require('dotenv')
+const cors = require("cors");
+const dotenv = require("dotenv");
 const port = 5000;
-
+const database = require("./src/config/setup")
 
 dotenv.config(); //process.env available
 
-app.use(express.json())
-app.use(cors())
+app.use(express.json());
+app.use(cors());
 
 //Routes import
-const authRoutes = require('./src/routes/authRoutes')
-const paperRoutes = require('./src/routes/paperRoutes')
-const categoryRoutes = require('./src/routes/categoryRoutes')
-const tagRoutes = require('./src/routes/tagRoutes')
+const authRoutes = require("./src/routes/authRoutes");
+const paperRoutes = require("./src/routes/paperRoutes");
+const categoryRoutes = require("./src/routes/categoryRoutes");
+const tagRoutes = require("./src/routes/tagRoutes");
 
+// Use routes
+app.use("/api/auth", authRoutes);
+app.use("/api/papers", paperRoutes);
+app.use("/api/categories", categoryRoutes);
+app.use("/api/tags", tagRoutes);
 
-//Use routes
-app.use('/api/auth', authRoutes)
-app.use('/api/papers', paperRoutes)
-app.use('/api/categories', categoryRoutes)
-app.use('/api/tags', tagRoutes)
+// setup db
+database.setupDb();
 
 app.get("/api", (req, res) => {
-    const message = req.query.message;
-    res.json({
-        "Server response": "Server reached successfully",
-        "client message": message || "No message received from client"
-    })
-})
+	const message = req.query.message;
+	
+	res.json({
+		"Server response": "Server reached successfully",
+		"client message": message || "No message received from client",
+	});
+});
 
 app.get("/api/research_papers", (req, res) => {
-    const temp_res = [
-		{
-			id: 1,
-			title: "AI in Healthcare: Revolutionizing Diagnosis",
-			author: "Dr. John Doe",
-			category: "Artificial Intelligence",
-			abstract: "Exploring how AI is transforming healthcare diagnostics...",
-		},
-		{
-			id: 2,
-			title: "Blockchain for Secure Transactions",
-			author: "Jane Smith",
-			category: "Blockchain",
-			abstract: "An in-depth look at the role of blockchain in secure transactions...",
-		},
-    ];
-
-    res.json(temp_res)
-})
-
-
-
-
+	res.status(500).json({ message: "api depreciated" });
+});
 
 app.get("/test_db", (req, res) => {
-    const message = req.query.message;
-    
-})
+	const message = req.query.message;
+});
 
 app.listen(port, () => {
 	console.log("Node server running on port", port);

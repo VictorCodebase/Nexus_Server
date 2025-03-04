@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const paperController = require('../controllers/paperController') 
-const { verifyToken, checkRole } = require('../../middleware/authMiddleware')
+const { verifyToken, checkRole } = require('../middleware/authMiddleware')
 
 router.post('/', verifyToken, checkRole(['admin', 'author']),paperController.uploadPaper)
 router.get('/', paperController.getPapers)

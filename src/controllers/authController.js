@@ -1,10 +1,14 @@
 const jwt = require("jsonwebtoken");
+const userModel = require("../models/userModel");
 
 const register = (req, res) => {
-	// TODO: implement register method
-	message = req.query.message;
-	temp_res = { message : "server reached, the called function has not been implemented yet", "client message": message || "no message" };
-	res.status(500).json(temp_res);
+	const { fname, lname, email, password } = req.body;
+	userModel.createUser(fname, lname, email, password);
+
+	res.status(200).json({ message: "Success: User register" });
+
+	const users = userModel.readUsers
+	console.log("Users: ", users)
 };
 
 const login = (req, res) => {
