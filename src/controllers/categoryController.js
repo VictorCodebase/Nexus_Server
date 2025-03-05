@@ -6,7 +6,6 @@ const getCategories = () => {
 };
 
 const addCategories = () => {
-	// TODO: implement addCategories method
 	message = req.query.message;
 	temp_res = { message: "Forbidden: You cannot add new categories" };
 	res.status(403).json(temp_res);

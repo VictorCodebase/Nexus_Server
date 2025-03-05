@@ -4,9 +4,6 @@ const userModel = require("../models/userModel");
 
 const register = (req, res) => {
 	const { fname, lname, email, password } = req.body;
-
-	const hashed = bcrypt.hash(password, bcrypt.genSalt());
-
 	const role = "Author";
 	if (userModel.readUserByMail(email)) {
 		return res.status(400).json({ message: "User email already exists" });
@@ -47,10 +44,7 @@ const login = (req, res) => {
 		return res.status(404).json({ message: "user not found" });
 	}
 
-	console.log("user: ", user);
-
 	if (!user || !bcrypt.compareSync(password, user.password)) {
-		console.log(`Credentials used \npassword: ${user.password}, real password: ${password}`);
 		return res.status(401).json({ message: "Invalid credentials" });
 	}
 
