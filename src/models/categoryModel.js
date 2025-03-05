@@ -13,7 +13,21 @@ const readCategoryByName = (name) => {
 	return stmt.get(lower); 
 };
 
+const readCategoryById = (id) => {
+    const stmt = db.prepare("SELECT category FROM categories WHERE category_id = ?");
+
+    return stmt.get(id)
+}
+
+const readAllCategories = () => {
+    const stmt = db.prepare("SELECT category_id, category FROM categories");
+
+    return stmt.all()
+}
+
 module.exports = {
 	createCategory,
 	readCategoryByName,
+    readCategoryById,
+    readAllCategories
 };

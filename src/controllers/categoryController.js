@@ -1,10 +1,11 @@
-const { readCategoryByName, createCategory } = require("../models/categoryModel");
+const { readCategoryByName, createCategory, readAllCategories } = require("../models/categoryModel");
 
 const getCategories = (req, res) => {
-	// TODO: implement getCategories method
-	message = req.query.message;
-	temp_res = { "server res: ": "server reached, the called function has not been implemented yet", "client message": message || "no message" };
-	res.status(501).json(temp_res);
+	const categories = readAllCategories();
+	if (categories) {
+		return res.status(200).json(categories);
+	}
+	return res.status(404).json({message: "No categories found"})
 };
 
 const addCategories = (req, res) => {
