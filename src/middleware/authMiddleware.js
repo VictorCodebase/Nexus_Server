@@ -21,11 +21,13 @@ const verifyToken = (req, res, next) => {
 
 const checkRole = (roles) => {
 	return (req, res, next) => {
-		if (!req.user || !roles.includes(req.user.role)) {
+		const userRole = req.user.role.toLowerCase();
+
+		if (!req.user || !roles.includes(userRole)) {
 			return res.status(403).json({ message: "Forbidden: You do not have access" });
 		}
 
-		if (req.user.role === "author") {
+		if (userRole === "author") {
 			// TODO: Fetch paper from db
 			const test_paper = {
 				authorId: 1,
@@ -39,8 +41,11 @@ const checkRole = (roles) => {
 			}
 
 			next();
-		} else if (req.user.role === "admin") {
+		} else if (userRole === "admin") {
 			return next();
+		} else {
+			console.warn(`unregistered role detected: ${userRole}`)
+			res.status(403).json({message: "forbidden: you do not have access"})
 		}
 	};
 };

@@ -6,9 +6,11 @@ const getCategories = () => {
 };
 
 const addCategories = () => {
-	message = req.query.message;
-	temp_res = { message: "Forbidden: You cannot add new categories" };
-	res.status(403).json(temp_res);
+	category = req.query.category;
+
+	console.log("got here")
+	temp_res = { message: `Category ${category} cannot be added right now` };
+	res.status(500).json(temp_res);
 };
 
 module.exports = {

@@ -1,8 +1,9 @@
-const express = require('express')
-const router = express.Router()
-const categoryController = require('../controllers/categoryController')
+const express = require("express");
+const router = express.Router();
+const categoryController = require("../controllers/categoryController");
+const { verifyToken, checkRole } = require("../middleware/authMiddleware");
 
-router.get('/categories', categoryController.getCategories)
-router.post('/categories', categoryController.addCategories)
+router.get("", categoryController.getCategories);
+router.post("", verifyToken, checkRole(["admin"]), categoryController.addCategories);
 
-module.exports = router
+module.exports = router;
