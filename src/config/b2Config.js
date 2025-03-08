@@ -9,3 +9,5 @@ const s3 = new S3Client({
 		secretAccessKey: process.env.B2_APPLICATION_KEY,
 	},
 });
+
+module.exports = s3

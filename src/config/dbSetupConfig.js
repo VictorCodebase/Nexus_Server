@@ -1,4 +1,4 @@
-const db = require("./db"); // Import database connection
+const db = require("./dbConfig"); // Import database connection
 
 /**
  * Research papers must have a "research" prefix
