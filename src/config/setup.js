@@ -1,36 +1,46 @@
 const db = require("./db"); // Import database connection
 
+/**
+ * Research papers must have a "research" prefix
+ */
+
 function setupDb() {
 	try {
 		db.exec(`
 			CREATE TABLE IF NOT EXISTS institutions (
 				institution_id INTEGER PRIMARY KEY AUTOINCREMENT,
-				institution_name VARCHAR(255) NOT NULL,
-				institution_country VARCHAR(255) NOT NULL
+				institution_name TEXT NOT NULL,
+				institution_country TEXT NOT NULL
 			);
 
-			CREATE TABLE IF NOT EXISTS users (
-				id INTEGER PRIMARY KEY AUTOINCREMENT,
-				institution_id INTEGER NOT NULL,
-				fname VARCHAR(255) NOT NULL,
-				lname VARCHAR(255) NOT NULL, 
-				username VARCHAR(255) NOT NULL,
-				email VARCHAR(255) UNIQUE NOT NULL,
-				role VARCHAR(50) NOT NULL,
-				password TEXT NOT NULL,
-				FOREIGN KEY (institution_id) REFERENCES institutions(institution_id) ON DELETE CASCADE
-			);
+		CREATE TABLE IF NOT EXISTS users (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			institution_id INTEGER NOT NULL,
+			fname TEXT NOT NULL,
+			lname TEXT NOT NULL, 
+			username TEXT NOT NULL,
+			email TEXT UNIQUE NOT NULL,
+			role TEXT NOT NULL,
+			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			password TEXT NOT NULL,
+			FOREIGN KEY (institution_id) REFERENCES institutions(institution_id) ON DELETE CASCADE
+		);
 
 			CREATE TABLE IF NOT EXISTS categories (
 				category_id INTEGER PRIMARY KEY AUTOINCREMENT,
-				category VARCHAR(100) UNIQUE NOT NULL
+				category TEXT UNIQUE NOT NULL
 			);
 
 			CREATE TABLE IF NOT EXISTS papers (
 				paper_id INTEGER PRIMARY KEY AUTOINCREMENT,
 				category_id INTEGER NOT NULL,
-				paper_name VARCHAR(500) NOT NULL,
+				paper_name TEXT NOT NULL,
 				description TEXT NOT NULL,
+				file_url TEXT NOT NULL,
+				meta TEXT,
+				created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+				deleted INTEGER NOT NULL CHECK (deleted IN (0,1)), -- Boolean (0 = false, 1 = true)
 				FOREIGN KEY(category_id) REFERENCES categories(category_id) ON DELETE CASCADE
 			);
 

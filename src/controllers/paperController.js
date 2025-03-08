@@ -26,6 +26,7 @@ const updatePaper = (req, res) => {
 		paperId: 1
 	}
 
+
 	if (!test_updated) {
 		return res.status(404).json({message: 'resource does not exist'})
 	}
