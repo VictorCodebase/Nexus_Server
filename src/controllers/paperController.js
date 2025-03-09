@@ -1,23 +1,18 @@
 const upload = require("../config/multerConfig");
 
 const uploadPaper = (req, res) => {
-	upload.single("paper")(req, res, async (err) => {
-		if (err) {
-			return res.status(400).json({
-				error: "File upload failed",
-				details: err.message,
-			});
-		}
 
-		if (!req.file) {
-			return res.status(400).json({error: "No file uploaded"})
-		}
+	if (!req.file) {
+		return res.status(400).json({error: "No file attatched"})
+	}
 
-		const fileUrl = req.file.location //url of uploaded file
-		console.log("File upload location: ", fileUrl)
+	const fileurl = req.file.location
+	console.log("file upload location: ", fileurl)
 
-		res.status(200).json({message: "paper uploaded successfully"})
-	});
+	res.status(200).json({
+		message: "page uploaded successfully",
+		fileurl: fileurl
+	})
 };
 
 const getPapers = (req, res) => {
