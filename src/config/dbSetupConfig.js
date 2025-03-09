@@ -13,18 +13,18 @@ function setupDb() {
 				institution_country TEXT NOT NULL
 			);
 
-		CREATE TABLE IF NOT EXISTS users (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			institution_id INTEGER NOT NULL,
-			fname TEXT NOT NULL,
-			lname TEXT NOT NULL, 
-			username TEXT NOT NULL,
-			email TEXT UNIQUE NOT NULL,
-			role TEXT NOT NULL,
-			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-			password TEXT NOT NULL,
-			FOREIGN KEY (institution_id) REFERENCES institutions(institution_id) ON DELETE CASCADE
-		);
+			CREATE TABLE IF NOT EXISTS users (
+				id INTEGER PRIMARY KEY AUTOINCREMENT,
+				institution_id INTEGER NOT NULL,
+				fname TEXT NOT NULL,
+				lname TEXT NOT NULL, 
+				username TEXT NOT NULL,
+				email TEXT UNIQUE NOT NULL,
+				role TEXT NOT NULL,
+				created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+				password TEXT NOT NULL,
+				FOREIGN KEY (institution_id) REFERENCES institutions(institution_id) ON DELETE CASCADE
+			);
 
 			CREATE TABLE IF NOT EXISTS categories (
 				category_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -39,10 +39,11 @@ function setupDb() {
 				file_url TEXT NOT NULL,
 				meta TEXT,
 				created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 				deleted INTEGER NOT NULL CHECK (deleted IN (0,1)), -- Boolean (0 = false, 1 = true)
 				FOREIGN KEY(category_id) REFERENCES categories(category_id) ON DELETE CASCADE
 			);
+
 
 			CREATE TABLE IF NOT EXISTS author_papers (
 				rauthor_id INTEGER NOT NULL,
