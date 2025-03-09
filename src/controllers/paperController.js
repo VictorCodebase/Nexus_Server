@@ -1,8 +1,23 @@
+const upload = require("../config/multerConfig");
+
 const uploadPaper = (req, res) => {
-	// TODO: implement uploadPaper method
-	message = req.query.message;
-	temp_res = { "server res: ": "server reached, the called function has not been implemented yet", "client message": message || "no message" };
-	res.status(500).json(temp_res);
+	upload.single("paper")(req, res, async (err) => {
+		if (err) {
+			return res.status(400).json({
+				error: "File upload failed",
+				details: err.message,
+			});
+		}
+
+		if (!req.file) {
+			return res.status(400).json({error: "No file uploaded"})
+		}
+
+		const fileUrl = req.file.location //url of uploaded file
+		console.log("File upload location: ", fileUrl)
+
+		res.status(200).json({message: "paper uploaded successfully"})
+	});
 };
 
 const getPapers = (req, res) => {
@@ -20,18 +35,17 @@ const getPaperById = (req, res) => {
 };
 
 const updatePaper = (req, res) => {
-	const paperId = req.params.id
+	const paperId = req.params.id;
 
 	const test_updated = {
-		paperId: 1
-	}
-
+		paperId: 1,
+	};
 
 	if (!test_updated) {
-		return res.status(404).json({message: 'resource does not exist'})
+		return res.status(404).json({ message: "resource does not exist" });
 	}
 
-	res.status(200).json({message: "paper updated successfully"})
+	res.status(200).json({ message: "paper updated successfully" });
 };
 
 const deletePaper = (req, res) => {
@@ -45,7 +59,7 @@ const deletePaper = (req, res) => {
 		return res.status(404).json({ message: "resource does not exist" });
 	}
 
-	res.status(200).json({message: "Paper deleted successfully"})
+	res.status(200).json({ message: "Paper deleted successfully" });
 };
 
 module.exports = {
