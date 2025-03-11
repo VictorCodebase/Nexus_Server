@@ -50,7 +50,18 @@ const login = (req, res) => {
 
 	const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1d" });
 
-	res.status(200).json({ token });
+	res.status(200).json({ 
+		token,
+		user:{
+			id: user.id,
+			fname: user.fname,
+			lname: user.lname,
+			email: user.email,
+			role: user.role,
+
+		}
+
+	 });
 };
 
 const logout = (req, res) => {

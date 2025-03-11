@@ -39,7 +39,7 @@ function setupDb() {
 				file_url TEXT NOT NULL,
 				meta TEXT,
 				created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ,
 				deleted INTEGER NOT NULL CHECK (deleted IN (0,1)), -- Boolean (0 = false, 1 = true)
 				FOREIGN KEY(category_id) REFERENCES categories(category_id) ON DELETE CASCADE
 			);
