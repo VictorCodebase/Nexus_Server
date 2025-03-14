@@ -25,9 +25,12 @@ const registerAdmin = (req, res) => {
 	if (userModel.readUserByMail(email)) {
 		return res.status(400).json({ message: "User email aready exists" });
 	}
-
+	if (!password) {
+		return res.status(500).json({ message: "password undefined"});
+	}
 	bcrypt.hash(password, 10, (err, hashed) => {
-		if (err) return res.status(500).json({ message: "Hashing error for password given" });
+		console.log("Error logged: ", err);
+		if (err) return res.status(500).json({ message: "Hashing error for password given", error: err });
 
 		userModel.createUser(fname, lname, email, role, hashed);
 		res.status(201).json({ message: "Success: Admin registered successfully" });
@@ -67,7 +70,7 @@ const getUser = (req, res) => {
 		return res.status(404).json({ message: "User does not exist" });
 	}
 
-	return res.status(200).json(user)
+	return res.status(200).json(user);
 };
 
 module.exports = {

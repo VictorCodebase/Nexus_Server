@@ -10,4 +10,16 @@ const s3 = new S3Client({
 	},
 });
 
+
+// An IIFE? Immediately Invoked Async Function: Runs immediately the file is imported anywhere (with require)
+
+(async () => {
+    try {
+        await s3.config.credentials();
+        console.log("Connected to Backblaze B2 successfully")
+    }catch(error){
+        console.error("Error connection to B2". error)
+    }
+})();
+
 module.exports = s3

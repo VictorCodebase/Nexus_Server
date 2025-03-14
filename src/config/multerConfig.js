@@ -6,12 +6,13 @@ const upload = multer({
 	storage: multerS3({
 		s3: s3,
 		bucket: process.env.B2_BUCKET_NAME,
+        acl: "public-read",
 		key: function (req, file, cb) {
 			const filename = `research-papers/${Date.now()}-${file.originalname}`;
 			cb(null, filename);
 		},
 	}),
-	limits: { fileSize: 10 * 1024 * 1024 },
 });
 
 module.exports = upload
+

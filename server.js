@@ -8,6 +8,7 @@ const database = require("./src/config/dbSetupConfig")
 dotenv.config(); //process.env available
 
 app.use(express.json());
+//app.use(express.urlencoded({extended: true}))
 app.use(cors());
 
 //Routes import
