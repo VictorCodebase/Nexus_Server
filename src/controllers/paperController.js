@@ -1,4 +1,5 @@
 const upload = require("../config/multerConfig");
+const paperModel = require("../models/paperModel")
 
 const uploadPaper = (req, res) => {
 
@@ -20,10 +21,40 @@ const localUploadPaper = (req, res) => {
 		return res.status(400).json({ error: "No file attatched" });
 	}
 
-	const fileurl = req.fileurl
-	console.log("File url: ", fileUrl)
+	const fileUrl = req.fileUrl;
+	const fileName = req.body.name
+	const category = req.body.category
+	const description = req.body.description;
+	const meta = req.body.meta;
+	console.log(req)
+	console.log("File url: ", fileUrl);
+	console.log("File category: ", category);
+	console.log("File description: ", description);
+	console.log("File meta: ", meta);
 
-	res.status(200).json({
+	const paper = paperModel.createPaper(
+		category,
+		fileName,
+		fileUrl,
+		description,
+		meta
+	)
+
+	if (!paper){
+		console.error("Paper not found (file creation): ", paper)
+		return res.status(500).json({message: "Error occured creating file"})
+	}
+	else{
+		return res.status(200).json({message: "Success"})
+	}
+
+
+
+
+	return res.status(500).json({message: "Method under dev"})
+
+
+	return res.status(200).json({
 		message: "page uploaded successfully",
 		fileurl: fileurl,
 	});
