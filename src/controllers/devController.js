@@ -1,8 +1,24 @@
 const dev = require("../models/devModel");
 
-const resetTable = (req, res) => {
+const readTable = (req, res) => {
 	const table = req.query.table;
 	console.log(req.query.table);
+
+	if (!table) {
+		return res.status(400).json({ message: "You must specify the table to be read" });
+	}
+
+	tableContents = dev.readTable(table);
+	if (!tableContents || tableContents.length === 0) {
+		console.log("table contents: ", tableContents);
+		return res.status(404).json({ message: "the requested table could not be found" });
+	}
+
+	return res.status(200).json({ table: tableContents });
+};
+
+const resetTable = (req, res) => {
+	const table = req.query.table;
 	if (!table) {
 		return res.status(400).json({ message: "You must specify the table to be reset" });
 	}
@@ -50,4 +66,5 @@ module.exports = {
 	resetTable,
 	resetTables,
 	restoreTables,
+	readTable,
 };

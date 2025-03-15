@@ -93,9 +93,20 @@ const recreateTables = () => {
 	}
 };
 
+const readTable = (table) => {
+	const ALLOWED_TABLES = ["papers"]
+
+	if (!ALLOWED_TABLES.includes(table)){
+		throw new Error("Invalid table name")
+	}
+	const stmt = db.prepare(`SELECT * FROM "${table}"`)
+	return stmt.all()
+}
+
 module.exports = {
     resetTable,
 	resetAllTables,
 	recreateTables,
 	restoreTables,
+	readTable
 };
