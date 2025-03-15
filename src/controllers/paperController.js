@@ -26,11 +26,11 @@ const localUploadPaper = (req, res) => {
 	const category = req.body.category
 	const description = req.body.description;
 	const meta = req.body.meta;
-	console.log(req)
-	console.log("File url: ", fileUrl);
-	console.log("File category: ", category);
-	console.log("File description: ", description);
-	console.log("File meta: ", meta);
+
+	if (!fileName) return res.status(400).json({message: "expected file name in the body as: name:<file_name>"})
+	if (!category) return res.status(400).json({ message: "expected file category in the body as: category:<file_category>" });
+	if (!description) return res.status(400).json({ message: "expected file description in the body as: description:<file_description>" });
+
 
 	const paper = paperModel.createPaper(
 		category,
@@ -48,16 +48,6 @@ const localUploadPaper = (req, res) => {
 		return res.status(200).json({message: "Success"})
 	}
 
-
-
-
-	return res.status(500).json({message: "Method under dev"})
-
-
-	return res.status(200).json({
-		message: "page uploaded successfully",
-		fileurl: fileurl,
-	});
 };
 
 const getPapers = (req, res) => {

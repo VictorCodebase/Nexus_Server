@@ -11,7 +11,7 @@ const readTable = (req, res) => {
 	tableContents = dev.readTable(table);
 	if (!tableContents || tableContents.length === 0) {
 		console.log("table contents: ", tableContents);
-		return res.status(404).json({ message: "the requested table could not be found" });
+		return res.status(404).json({ message: "the requested table could not be found or is empty" });
 	}
 
 	return res.status(200).json({ table: tableContents });
