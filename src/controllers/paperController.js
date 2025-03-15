@@ -1,19 +1,18 @@
 const upload = require("../config/multerConfig");
-const paperModel = require("../models/paperModel")
+const paperModel = require("../models/paperModel");
 
 const uploadPaper = (req, res) => {
-
 	if (!req.file) {
-		return res.status(400).json({error: "No file attatched"})
+		return res.status(400).json({ error: "No file attatched" });
 	}
 
-	const fileurl = req.file.location
-	console.log("file upload location: ", fileurl)
+	const fileurl = req.file.location;
+	console.log("file upload location: ", fileurl);
 
 	res.status(200).json({
 		message: "page uploaded successfully",
-		fileurl: fileurl
-	})
+		fileurl: fileurl,
+	});
 };
 
 const localUploadPaper = (req, res) => {
@@ -22,37 +21,46 @@ const localUploadPaper = (req, res) => {
 	}
 
 	const fileUrl = req.fileUrl;
-	const fileName = req.body.name
-	const category = req.body.category
+	const fileName = req.body.name;
+	const category = req.body.category;
 	const description = req.body.description;
 	const meta = req.body.meta;
 
-	if (!fileName) return res.status(400).json({message: "expected file name in the body as: name:<file_name>"})
+	if (!fileName) return res.status(400).json({ message: "expected file name in the body as: name:<file_name>" });
 	if (!category) return res.status(400).json({ message: "expected file category in the body as: category:<file_category>" });
 	if (!description) return res.status(400).json({ message: "expected file description in the body as: description:<file_description>" });
 
+	const paper = paperModel.createPaper(category, fileName, fileUrl, description, meta);
 
-	const paper = paperModel.createPaper(
-		category,
-		fileName,
-		fileUrl,
-		description,
-		meta
-	)
-
-	if (!paper){
-		console.error("Paper not found (file creation): ", paper)
-		return res.status(500).json({message: "Error occured creating file"})
+	if (!paper) {
+		console.error("Paper not found (file creation): ", paper);
+		return res.status(500).json({ message: "Error occured creating file" });
+	} else {
+		return res.status(200).json({ message: "Success" });
 	}
-	else{
-		return res.status(200).json({message: "Success"})
-	}
-
 };
 
 const getPapers = (req, res) => {
-	const {category, tag, q} = req.query
-	 
+	try {
+		const { category, tag, q, offset, limit } = req.query;
+
+		const parsedOffset = parseInt(offset);
+		const parsedLimit = parseInt(limit);
+
+		// Should you change the hardlimit from 30
+		// remember to change the limit in paperModel too :)
+		const paginationLimit = 30;
+
+		if (parsedLimit > paginationLimit) return res.status(400).json({ error: `limit cannot exceed ${paginationLimit} a request` });
+
+		const filters = { category, tag, q };
+		const papers = paperModel.getPapers(filters, parsedOffset, parsedLimit);
+
+		res.status(200).json({ data: papers, offset: offset, limit, limit });
+	} catch(error) {
+		console.error("Error fetching papers: ", error)
+		res.status(500).json({ message: "operation failed" });
+	}
 };
 
 const getPaperById = (req, res) => {
