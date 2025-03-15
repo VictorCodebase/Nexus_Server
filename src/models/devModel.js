@@ -48,7 +48,8 @@ const resetAllTables = () => {
 			tables.forEach(({ name }) => {
 				db.prepare(`DROP TABLE IF EXISTS "${name}"`).run();
 			});
-		})();
+		});
+
 		db.prepare(`PRAGMA foreign_keys = ON`).run();
 
 		console.log("All tables deleted successfully.");
@@ -73,7 +74,7 @@ const restoreTables = (backupFile) => {
 			queries.forEach((query) => {
 				db.prepare(query).run();
 			});
-		})();
+		});
 
 		console.log(`Tables restored successfully from ${backupFile}`);
 		return true;

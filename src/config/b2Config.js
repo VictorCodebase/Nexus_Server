@@ -21,13 +21,14 @@ const s3 = new S3Client({
 		console.error("Error connection to B2".error);
 	}
 
-	try {
-		const command = new HeadBucketCommand({ Bucket: process.env.B2_BUCKET_NAME });
-		await s3.send(command);
-		console.log("Bucket exists and is accessible!");
-	} catch (error) {
-		console.error("Bucket Error:", error);
-	}
+	//? Test bucket
+	// try {
+	// 	const command = new HeadBucketCommand({ Bucket: process.env.B2_BUCKET_NAME });
+	// 	await s3.send(command);
+	// 	console.log("Bucket exists and is accessible!");
+	// } catch (error) {
+	// 	console.error("Bucket Error:", error);
+	// }
 })();
 
 module.exports = s3;
