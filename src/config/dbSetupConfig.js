@@ -59,4 +59,14 @@ function setupDb() {
 	}
 }
 
+/**
+ * CREATE TRIGGER update_paper_timestamp
+ * AFTER UPDATE ON papers
+ * FOR EACH ROW
+ * BEGIN
+ * UPDATE papers SET updated_at = CURRENT_TIMESTAMP WHERE paper_id = OLD.paper_id;
+ * END;
+ *
+ */
+
 module.exports = { setupDb };

@@ -2,7 +2,8 @@ const express = require("express");
 const router = express.Router();
 const paperController = require("../controllers/paperController");
 const { verifyToken, checkRole } = require("../middleware/authMiddleware");
-const upload = require("../config/multerConfig");
+const {upload, localstore} = require("../config/multerConfig");
+const {ensurePathExists} = require("../middleware/pathMiddleware")
 
 router.post(
 	"/",
@@ -15,7 +16,7 @@ router.post(
 	},
 	checkRole(["admin", "author"]),
 	(req, res) => {
-		upload.single("paper")(req, res, (err) => {
+		upload.single("file")(req, res, (err) => {
 			if (err) {
 				console.error("Multer Error: ", err);
 				return res.status(400).json({ error: "File upload failed", details: err.message });
@@ -32,6 +33,7 @@ router.post(
 	},
 	paperController.uploadPaper
 );
+router.post("/local", ensurePathExists("../uploads") ,localstore.single("file"), paperController.localUploadPaper);
 router.get("/", paperController.getPapers);
 router.get("/:id", paperController.getPaperById); //TODO: le tthis allow pagination (instead of sendign everything)
 router.put("/:id", verifyToken, checkRole(["author", "admin"]), paperController.updatePaper); //TODO: Confirm if it is okay admin has rights to update paper

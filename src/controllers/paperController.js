@@ -15,6 +15,20 @@ const uploadPaper = (req, res) => {
 	})
 };
 
+const localUploadPaper = (req, res) => {
+	if (!req.file) {
+		return res.status(400).json({ error: "No file attatched" });
+	}
+
+	const fileurl = req.fileurl
+	console.log("File url: ", fileUrl)
+
+	res.status(200).json({
+		message: "page uploaded successfully",
+		fileurl: fileurl,
+	});
+};
+
 const getPapers = (req, res) => {
 	// TODO: implement getPaper method
 	message = req.query.message;
@@ -59,6 +73,7 @@ const deletePaper = (req, res) => {
 
 module.exports = {
 	uploadPaper,
+	localUploadPaper,
 	getPapers,
 	getPaperById,
 	updatePaper,
