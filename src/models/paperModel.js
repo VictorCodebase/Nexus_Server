@@ -38,17 +38,17 @@ const getPapers = (filters, offset = 0, limit = 30) => {
 	try {
 		if (filters.category) {
 			query += " AND category_id = ?";
-			params.push(filters.category);
+			params.push(Number(filters.category));
 		}
 
-		if (filters.tag) {
-			query += " AND tag_id = ?";
-			params.push(filters.tag);
-		}
+		// if (filters.tag) {
+		// 	query += " AND tag_id = ?";
+		// 	params.push(Number(filters.tag));
+		// }
 
 		if (filters.q) {
 			query += " AND (title LIKE ? OR description LIKE ?)";
-			params.push(`%${filters.q}%`, `%${filters.q}%`);
+			params.push(`%${String(filters.q)}%`, `%${String(filters.q)}%`);
 		}
 
 		// Pagination hard limit on 30 docs per query
@@ -56,6 +56,12 @@ const getPapers = (filters, offset = 0, limit = 30) => {
 		params.push(limit, offset);
 
 		const stmt = db.prepare(query);
+
+		console.log("Executing query:", query);
+		console.log("With params:", params);
+		console.log("OFfset", offset)
+		console.log("Limit", limit)
+
 		return stmt.all(...params);
 	} catch (error) {
 		console.error("Error filtering papers:", error);

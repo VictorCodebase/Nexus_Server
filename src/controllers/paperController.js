@@ -54,16 +54,19 @@ const getPapers = (req, res) => {
 
 		const parsedOffset = parseInt(offset);
 		const parsedLimit = parseInt(limit);
+		if (isNaN(parsedLimit)) paginationLimit = null
+		if (isNaN(parsedOffset)) parsedOffset = null
 
-		// Should you change the hardlimit from 30
-		// remember to change the limit in paperModel too :)
+		//? Should you change the hardlimit from 30
+		//? remember to change the limit in paperModel too :)
 		const paginationLimit = 30;
 
 		if (parsedLimit > paginationLimit) return res.status(400).json({ error: `limit cannot exceed ${paginationLimit} a request` });
 
+
 		const filters = { category, tag, q };
 		const papers = paperModel.getPapers(filters, parsedOffset, parsedLimit);
-
+		console.log("papers",papers)
 		res.status(200).json({ data: papers, offset: offset, limit, limit });
 	} catch(error) {
 		console.error("Error fetching papers: ", error)
