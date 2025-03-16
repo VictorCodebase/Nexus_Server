@@ -4,7 +4,7 @@ const paperController = require("../controllers/paperController");
 const { verifyToken, checkRole } = require("../middleware/authMiddleware");
 const { upload, localstore } = require("../config/multerConfig");
 const { ensurePathExists } = require("../middleware/pathMiddleware");
-const multer = require("multer");
+// const multer = require("multer");
 
 router.post(
 	"/",
@@ -34,11 +34,13 @@ router.post(
 	},
 	paperController.uploadPaper
 ); // Upload paper
-//TODO: Check if all required fields are filled before accpting upload
+
+//TODO: Check if all required fields are filled before accepting upload
 router.post("/local", ensurePathExists("../uploads"), localstore.single("file"), paperController.localUploadPaper); //upload paper locally
 router.get("", paperController.getPapers);
-router.get("/:id", paperController.getPaperById); //TODO: le tthis allow pagination (instead of sendign everything)
-router.put("/:id", verifyToken, checkRole(["author", "admin"]), paperController.updatePaper); //TODO: Confirm if it is okay admin has rights to update paper
+
+// router.get("/:id", paperController.getPaperById);
+router.put("/:id", verifyToken, checkRole(["author", "admin"]), paperController.updatePaper); //TODO: Make this work
 router.delete("/:id", verifyToken, checkRole(["admin", "author"]), paperController.deletePaper);
 
 module.exports = router;
