@@ -41,6 +41,11 @@ const getPapers = (filters, offset = 0, limit = 30) => {
 	let conditions = ["1=1"];
 
 	try {
+		if (filters.id){
+			query += " AND papers.paper_id= ?";
+			params.push(Number(filters.id))
+		}
+
 		if (filters.category) {
 			query += " AND category_id = ?";
 			params.push(Number(filters.category));
@@ -70,6 +75,7 @@ const getPapers = (filters, offset = 0, limit = 30) => {
 		return null;
 	}
 };
+
 
 module.exports = {
 	createPaper,

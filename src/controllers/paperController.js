@@ -42,7 +42,7 @@ const localUploadPaper = (req, res) => {
 
 	if (!paper) {
 		console.error("Paper creation failed: ", paper);
-		return res.status(500).json({ message: "Error occured creating file" });
+		return res.status(500).json({ error: "Error occured creating file" });
 	} else {
 		return res.status(200).json({ message: "Success" });
 	}
@@ -50,7 +50,7 @@ const localUploadPaper = (req, res) => {
 
 const getPapers = (req, res) => {
 	try {
-		const { category, tag, q, offset, limit } = req.query;
+		const { id, category, tag, q, offset, limit } = req.query;
 
 		let parsedOffset = parseInt(offset);
 		let parsedLimit = parseInt(limit);
@@ -64,9 +64,10 @@ const getPapers = (req, res) => {
 		if (parsedLimit > paginationLimit) return res.status(400).json({ error: `limit cannot exceed ${paginationLimit} a request` });
 
 
-		const filters = { category, tag, q };
+		const filters = { id, category, tag, q };
 		const papers = paperModel.getPapers(filters, parsedOffset, parsedLimit);
-		console.log("papers",papers)
+
+		if (papers === null) return res.status(404).json({error: "No such resource found"})
 		res.status(200).json({ data: papers, offset: offset, limit, limit });
 	} catch(error) {
 		console.error("Error fetching papers: ", error)
