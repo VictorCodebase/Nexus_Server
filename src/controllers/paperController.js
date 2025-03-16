@@ -52,10 +52,10 @@ const getPapers = (req, res) => {
 	try {
 		const { category, tag, q, offset, limit } = req.query;
 
-		const parsedOffset = parseInt(offset);
-		const parsedLimit = parseInt(limit);
-		if (isNaN(parsedLimit)) paginationLimit = null
-		if (isNaN(parsedOffset)) parsedOffset = null
+		let parsedOffset = parseInt(offset);
+		let parsedLimit = parseInt(limit);
+		if (isNaN(parsedLimit)) parsedLimit = 30 //default
+		if (isNaN(parsedOffset)) parsedOffset = 0 //default
 
 		//? Should you change the hardlimit from 30
 		//? remember to change the limit in paperModel too :)

@@ -57,11 +57,6 @@ const getPapers = (filters, offset = 0, limit = 30) => {
 
 		const stmt = db.prepare(query);
 
-		console.log("Executing query:", query);
-		console.log("With params:", params);
-		console.log("OFfset", offset)
-		console.log("Limit", limit)
-
 		return stmt.all(...params);
 	} catch (error) {
 		console.error("Error filtering papers:", error);
