@@ -2,83 +2,110 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const userModel = require("../models/userModel");
 
-const register = (req, res) => {
-	const { fname, lname, email, password } = req.body;
-	const role = "Author";
-	if (userModel.readUserByMail(email)) {
-		return res.status(400).json({ message: "User email already exists" });
-	}
-	bcrypt.hash(password, 10, (err, hashed) => {
-		if (err) return res.status(500).json({ message: "Hashing error for password given" });
+// ✅ Asynchronous register function
+const register = async (req, res) => {
+	try {
+		const { fname, lname, email, password } = req.body;
+		const role = "Author";
 
-		userModel.createUser(fname, lname, email, role, hashed);
-		res.status(201).json({ message: "Success: User register" });
-	});
-
-	return;
-};
-
-const registerAdmin = (req, res) => {
-	const { fname, lname, email, password } = req.body;
-
-	const role = "Admin";
-	if (userModel.readUserByMail(email)) {
-		return res.status(400).json({ message: "User email aready exists" });
-	}
-
-	bcrypt.hash(password, 10, (err, hashed) => {
-		if (err) return res.status(500).json({ message: "Hashing error for password given" });
-
-		userModel.createUser(fname, lname, email, role, hashed);
-		res.status(201).json({ message: "Success: Admin registered successfully" });
-	});
-
-	return;
-};
-
-const login = (req, res) => {
-	const { email, password } = req.body;
-	const user = userModel.readUserByMail(email);
-
-	if (!user) {
-		return res.status(404).json({ message: "user not found" });
-	}
-
-	if (!user || !bcrypt.compareSync(password, user.password)) {
-		return res.status(401).json({ message: "Invalid credentials" });
-	}
-
-	const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1d" });
-
-	res.status(200).json({ 
-		token,
-		user:{
-			id: user.id,
-			fname: user.fname,
-			lname: user.lname,
-			email: user.email,
-			role: user.role,
-
+		// Check if the email is already registered
+		const existingUser = await userModel.readUserByMail(email);
+		if (existingUser) {
+			return res.status(400).json({ message: "User email already exists" });
 		}
 
-	 });
-};
+		// Hash password
+		const hashedPassword = await bcrypt.hash(password, 10);
 
-const logout = (req, res) => {
-	// TODO: implement logout method
-	message = req.query.message;
-	temp_res = { message: "server reached, the called function has not been implemented yet", "client message": message || "no message" };
-	res.status(500).json(temp_res);
-};
+		// Create user
+		await userModel.createUser(fname, lname, email, role, hashedPassword);
+		res.status(201).json({ message: "User registered successfully" });
 
-const getUser = (req, res) => {
-	const user = userModel.readUserById(req.user.id);
-
-	if (!user) {
-		return res.status(404).json({ message: "User does not exist" });
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: "Server error" });
 	}
+};
 
-	return res.status(200).json(user)
+// ✅ Asynchronous registerAdmin function
+const registerAdmin = async (req, res) => {
+	try {
+		const { fname, lname, email, password } = req.body;
+		const role = "Admin";
+
+		// Check if the email already exists
+		const existingUser = await userModel.readUserByMail(email);
+		if (existingUser) {
+			return res.status(400).json({ message: "User email already exists" });
+		}
+
+		// Hash password
+		const hashedPassword = await bcrypt.hash(password, 10);
+
+		// Create user
+		await userModel.createUser(fname, lname, email, role, hashedPassword);
+		res.status(201).json({ message: "Admin registered successfully" });
+
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: "Server error" });
+	}
+};
+
+// ✅ Improved login function
+const login = async (req, res) => {
+	try {
+		const { email, password } = req.body;
+
+		// Fetch user from database
+		const user = await userModel.readUserByMail(email);
+		if (!user) {
+			return res.status(404).json({ message: "User not found" });
+		}
+
+		// Compare password
+		const isMatch = await bcrypt.compare(password, user.password);
+		if (!isMatch) {
+			return res.status(401).json({ message: "Invalid credentials" });
+		}
+
+		// Generate JWT token
+		const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1d" });
+
+		res.status(200).json({
+			token,
+			user: {
+				id: user.id,
+				fname: user.fname,
+				lname: user.lname,
+				email: user.email,
+				role: user.role,
+			}
+		});
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: "Server error" });
+	}
+};
+
+// ✅ Logout function (Handled client-side for JWT authentication)
+const logout = (req, res) => {
+	// JWT-based logout is handled on the client-side by removing the token
+	res.status(200).json({ message: "Logout successful. Please remove token on client-side." });
+};
+
+// ✅ Fetch authenticated user details
+const getUser = async (req, res) => {
+	try {
+		const user = await userModel.readUserById(req.user.id);
+		if (!user) {
+			return res.status(404).json({ message: "User does not exist" });
+		}
+		res.status(200).json(user);
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: "Server error" });
+	}
 };
 
 module.exports = {

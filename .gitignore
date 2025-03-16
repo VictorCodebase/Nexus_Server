@@ -32,7 +32,7 @@ tmp/
 temp/
 *.tmp
 *.swp
-*.swo
+*.swos
 *.bak
 
 # OS-specific files
@@ -48,3 +48,4 @@ Thumbs.db
 coverage/
 .nyc
 gds-tmdi-tze
+.env
