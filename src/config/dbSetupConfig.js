@@ -39,10 +39,17 @@ function setupDb() {
 				tag TEXT UNIQUE NOT NULL
 			);
 
+			CREATE TABLE IF NOT EXISTS paper_tags (
+				paper_id INTEGER NOT NULL,
+				tag_id INTEGER NOT NULL,
+				PRIMARY KEY (paper_id, tag_id),
+				FOREIGN KEY (paper_id) REFERENCES papers(paper_id) ON DELETE CASCADE,
+				FOREIGN KEY (tag_id) REFERENCES tags(tag_id) ON DELETE CASCADE
+			);
+
 			CREATE TABLE IF NOT EXISTS papers (
 				paper_id INTEGER PRIMARY KEY AUTOINCREMENT,
 				category_id INTEGER NOT NULL,
-				tag_id INTEGER NOT NULL,
 				paper_name TEXT NOT NULL,
 				file_url TEXT NOT NULL,
 				description TEXT,

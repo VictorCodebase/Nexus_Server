@@ -23,17 +23,25 @@ const localUploadPaper = (req, res) => {
 	const fileUrl = req.fileUrl;
 	const fileName = req.body.name;
 	const category = req.body.category;
+	let tags = req.body.tags || []
 	const description = req.body.description;
 	const meta = req.body.meta;
+
+	console.log(req.body)
+
+	if (tags) tags = JSON.parse(tags)
 
 	if (!fileName) return res.status(400).json({ message: "expected file name in the body as: name:<file_name>" });
 	if (!category) return res.status(400).json({ message: "expected file category in the body as: category:<file_category>" });
 	if (!description) return res.status(400).json({ message: "expected file description in the body as: description:<file_description>" });
+	if (!Array.isArray(tags)) return res.status(400).json({message: "tags should be an array"})
+	if (tags.length > 10) return res.status(400).json({message: "Maximum number of tags associatable to a paper exceeded"})
 
-	const paper = paperModel.createPaper(category, fileName, fileUrl, description, meta);
+
+	const paper = paperModel.createPaper(category, fileName, fileUrl, description, meta, tags);
 
 	if (!paper) {
-		console.error("Paper not found (file creation): ", paper);
+		console.error("Paper creation failed: ", paper);
 		return res.status(500).json({ message: "Error occured creating file" });
 	} else {
 		return res.status(200).json({ message: "Success" });
