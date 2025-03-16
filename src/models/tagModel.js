@@ -1,8 +1,9 @@
 const db = require("../config/dbConfig");
 
-// TODO: Confirm whether tags are still a thing
-const createTag = (tag) => {
-	const stmt = db.prepare("DROP TABLE papers");
+
+const createTag = (field, tag) => {
+	const stmt = db.prepare("INSERT INTO tags (field, tag) VALUES(?, ?)");
+	return stmt.run(field, tag)
 };
 
 module.exports = {
