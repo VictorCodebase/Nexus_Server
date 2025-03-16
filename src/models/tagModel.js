@@ -8,23 +8,23 @@ const createTag = (field, tag) => {
 
 
 //Get tags allows filtering tags
-const getTags = (field=null, id=null, q=null) => {
-	let query = "SELECT FROM tags WHERE 1=1"
+const getTags = (field, id, q) => {
+	let query = "SELECT * FROM tags WHERE 1=1"
 	const params = []
 
 	try {
 		if (field) {
-			query += "AND field = ?";
+			query += " AND field = ?";
 			params.push(field)
 		}
 
 		if (id) {
-			query += "AND tag_id = ?"
+			query += " AND tag_id = ?"
 			params.push(id)
 		}
 
 		if (q) {
-			query += "AND (tag LIKE ?)"
+			query += " AND (tag LIKE ?)"
 			params.push(`%${q}%`)
 		}
 
@@ -38,4 +38,5 @@ const getTags = (field=null, id=null, q=null) => {
 
 module.exports = {
 	createTag,
+	getTags
 };
