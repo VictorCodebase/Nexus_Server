@@ -94,10 +94,10 @@ const recreateTables = () => {
 };
 
 const readTable = (table) => {
-	const ALLOWED_TABLES = ["papers"]
+	const ALLOWED_TABLES = ["papers", "tags"]
 
 	if (!ALLOWED_TABLES.includes(table)){
-		throw new Error("Invalid table name")
+		throw new Error("Unrecognized table")
 	}
 	const stmt = db.prepare(`SELECT * FROM "${table}"`)
 	return stmt.all()

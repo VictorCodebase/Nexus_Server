@@ -8,9 +8,10 @@ const readTable = (req, res) => {
 		return res.status(400).json({ message: "You must specify the table to be read" });
 	}
 
-	tableContents = dev.readTable(table);
-	if (!tableContents || tableContents.length === 0) {
-		console.log("table contents: ", tableContents);
+	try {
+		tableContents = dev.readTable(table);
+	} catch (error) {
+		console.error("Error occured: ", error)
 		return res.status(404).json({ message: "the requested table could not be found or is empty" });
 	}
 

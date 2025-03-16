@@ -6,6 +6,36 @@ const createTag = (field, tag) => {
 	return stmt.run(field, tag)
 };
 
+
+//Get tags allows filtering tags
+const getTags = (field=null, id=null, q=null) => {
+	let query = "SELECT FROM tags WHERE 1=1"
+	const params = []
+
+	try {
+		if (field) {
+			query += "AND field = ?";
+			params.push(field)
+		}
+
+		if (id) {
+			query += "AND tag_id = ?"
+			params.push(id)
+		}
+
+		if (q) {
+			query += "AND (tag LIKE ?)"
+			params.push(`%${q}%`)
+		}
+
+		const stmt = db.prepare(query)
+		return stmt.all(...params)
+	}catch(error){
+		console.error("Error filtering tags", error)
+		return null;
+	}
+}
+
 module.exports = {
 	createTag,
 };

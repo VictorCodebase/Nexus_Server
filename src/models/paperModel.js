@@ -39,6 +39,7 @@ const getPapers = (filters, offset = 0, limit = 30) => {
 		return stmt.all(...params);
         
 	} catch (error) {
+		console.error("Error filtering papers:", error)
 		return null;
 	}
 };
