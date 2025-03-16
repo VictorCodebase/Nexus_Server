@@ -9,31 +9,36 @@ const createPaper = (category_id, paper_name, file_url, description, meta = null
 
 	const paper_id = result.lastInsertRowid;
 
-	try{
+	try {
 		if (tags.length > 0) {
-		const tagStmt = db.prepare("INSERT INTO paper_tags (paper_id, tag_id) VALUES (?, ?)");
-		const insertMany = db.transaction((tags) => {
-			for (const tag_id of tags) {
-				tagStmt.run(paper_id, tag_id);
-			}
-		});
-		insertMany(tags);
+			const tagStmt = db.prepare("INSERT INTO paper_tags (paper_id, tag_id) VALUES (?, ?)");
+			const insertMany = db.transaction((tags) => {
+				for (const tag_id of tags) {
+					tagStmt.run(paper_id, tag_id);
+				}
+			});
+			insertMany(tags);
+		}
+	} catch (error) {
+		throw new Error();
 	}
-	}catch(error){
-		throw new Error()
-	}
-	
 
-	return paper_id
+	return paper_id;
 };
 
 const getPapers = (filters, offset = 0, limit = 30) => {
-	let query = "SELECT * FROM papers WHERE 1=1";
+	let query = `
+        SELECT DISTINCT papers.* 
+        FROM papers 
+        LEFT JOIN paper_tags ON papers.paper_id = paper_tags.paper_id
+    `;
 	const params = [];
 
 	if (limit > 30) {
 		throw new Error("Hard limit of 30 documents a time hit");
 	}
+
+	let conditions = ["1=1"];
 
 	try {
 		if (filters.category) {
@@ -41,15 +46,17 @@ const getPapers = (filters, offset = 0, limit = 30) => {
 			params.push(Number(filters.category));
 		}
 
-		// if (filters.tag) {
-		// 	query += " AND tag_id = ?";
-		// 	params.push(Number(filters.tag));
-		// }
+		if (filters.tag) {
+			conditions.push("paper_tags.tag_id = ?");
+			params.push(Number(filters.tag));
+		}
 
 		if (filters.q) {
 			query += " AND (title LIKE ? OR description LIKE ?)";
 			params.push(`%${String(filters.q)}%`, `%${String(filters.q)}%`);
 		}
+
+		query += ` WHERE ${conditions.join(" AND ")}`;
 
 		// Pagination hard limit on 30 docs per query
 		query += " ORDER BY created_at DESC LIMIT ? OFFSET ?";
