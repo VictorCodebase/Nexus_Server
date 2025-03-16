@@ -24,8 +24,8 @@ const getTags = (field, id, q) => {
 		}
 
 		if (q) {
-			query += " AND (tag LIKE ?)"
-			params.push(`%${q}%`)
+			query += " AND (tag LIKE ? OR field LIKE ?)"
+			params.push(`%${q}%`, `%${q}%`);
 		}
 
 		const stmt = db.prepare(query)

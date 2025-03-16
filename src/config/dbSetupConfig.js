@@ -42,6 +42,7 @@ function setupDb() {
 			CREATE TABLE IF NOT EXISTS papers (
 				paper_id INTEGER PRIMARY KEY AUTOINCREMENT,
 				category_id INTEGER NOT NULL,
+				tag_id INTEGER NOT NULL,
 				paper_name TEXT NOT NULL,
 				file_url TEXT NOT NULL,
 				description TEXT,
