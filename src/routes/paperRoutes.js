@@ -2,8 +2,9 @@ const express = require("express");
 const router = express.Router();
 const paperController = require("../controllers/paperController");
 const { verifyToken, checkRole } = require("../middleware/authMiddleware");
-const {upload, localstore} = require("../config/multerConfig");
-const {ensurePathExists} = require("../middleware/pathMiddleware")
+const { upload, localstore } = require("../config/multerConfig");
+const { ensurePathExists } = require("../middleware/pathMiddleware");
+// const multer = require("multer");
 
 router.post(
 	"/",
@@ -21,22 +22,25 @@ router.post(
 				console.error("Multer Error: ", err);
 				return res.status(400).json({ error: "File upload failed", details: err.message });
 			}
-            console.log("Multer Executed")
-            console.log("received file: ", req.file)
+			console.log("Multer Executed");
+			console.log("received file: ", req.file);
 
-            if (!req.file) {
-                return res.status(400).json({error: "No file uploaded"})
-            }
+			if (!req.file) {
+				return res.status(400).json({ error: "No file uploaded" });
+			}
 
-            res.status(200).json({message: "Upload successful"})
+			res.status(200).json({ message: "Upload successful" });
 		});
 	},
 	paperController.uploadPaper
-);
-router.post("/local", ensurePathExists("../uploads") ,localstore.single("file"), paperController.localUploadPaper);
-router.get("/", paperController.getPapers);
-router.get("/:id", paperController.getPaperById); //TODO: le tthis allow pagination (instead of sendign everything)
-router.put("/:id", verifyToken, checkRole(["author", "admin"]), paperController.updatePaper); //TODO: Confirm if it is okay admin has rights to update paper
+); // Upload paper
+
+//TODO: Check if all required fields are filled before accepting upload
+router.post("/local", ensurePathExists("../uploads"), localstore.single("file"), paperController.localUploadPaper); //upload paper locally
+router.get("", paperController.getPapers);
+
+// router.get("/:id", paperController.getPaperById);
+router.put("/:id", verifyToken, checkRole(["author", "admin"]), paperController.updatePaper); //TODO: Make this work
 router.delete("/:id", verifyToken, checkRole(["admin", "author"]), paperController.deletePaper);
 
 module.exports = router;

@@ -4,6 +4,15 @@ package-lock.json
 pnpm-lock.yaml
 yarn.lock
 
+
+# Database and backups
+src/backups/*
+src/uploads/*
+
+# .pdf and db
+*.pdf
+*.db
+
 # Environment variables
 .env
 .env.local
@@ -11,10 +20,9 @@ yarn.lock
 .env.test.local
 .env.production.local
 
-# user specific
+
 *.db
 *.pdf
-
 
 # Logs
 npm-debug.log*
@@ -37,6 +45,8 @@ tmp/
 temp/
 *.tmp
 *.swp
+
+*.swo
 *.swos
 *.bak
 
@@ -51,6 +61,20 @@ Thumbs.db
 
 # Testing coverage reports
 coverage/
+
+.nyc_output/
+
+# PM2 process files
+pm2.log
+pm2.pid
+pm2.out.log
+pm2.error.log
+
+# Miscellaneous
+*.gz
+*.zip
+
 .nyc
 gds-tmdi-tze
 .env
+

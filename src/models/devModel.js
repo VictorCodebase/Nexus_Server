@@ -48,7 +48,8 @@ const resetAllTables = () => {
 			tables.forEach(({ name }) => {
 				db.prepare(`DROP TABLE IF EXISTS "${name}"`).run();
 			});
-		})();
+		});
+
 		db.prepare(`PRAGMA foreign_keys = ON`).run();
 
 		console.log("All tables deleted successfully.");
@@ -73,7 +74,7 @@ const restoreTables = (backupFile) => {
 			queries.forEach((query) => {
 				db.prepare(query).run();
 			});
-		})();
+		});
 
 		console.log(`Tables restored successfully from ${backupFile}`);
 		return true;
@@ -92,9 +93,20 @@ const recreateTables = () => {
 	}
 };
 
+const readTable = (table) => {
+	const ALLOWED_TABLES = ["papers", "users", "categories", "author_papers"];
+
+	if (!ALLOWED_TABLES.includes(table)){
+		throw new Error("Unrecognized table")
+	}
+	const stmt = db.prepare(`SELECT * FROM "${table}"`)
+	return stmt.all()
+}
+
 module.exports = {
     resetTable,
 	resetAllTables,
 	recreateTables,
 	restoreTables,
+	readTable
 };

@@ -6,7 +6,9 @@ const db = require("./dbConfig"); // Import database connection
 
 function setupDb() {
 	try {
-		db.exec(`
+		db.exec("PRAGMA foreign_keys = ON;"); // Enable foreign keys before everything
+		
+		db.exec(` 
 			CREATE TABLE IF NOT EXISTS institutions (
 				institution_id INTEGER PRIMARY KEY AUTOINCREMENT,
 				institution_name TEXT NOT NULL,
@@ -31,16 +33,31 @@ function setupDb() {
 				category TEXT UNIQUE NOT NULL
 			);
 
+			CREATE TABLE IF NOT EXISTS tags (
+				tag_id INTEGER PRIMARY KEY AUTOINCREMENT,
+				field TEXT NOT NULL,
+				tag TEXT UNIQUE NOT NULL
+			);
+
+			CREATE TABLE IF NOT EXISTS paper_tags (
+				paper_id INTEGER NOT NULL,
+				tag_id INTEGER NOT NULL,
+				PRIMARY KEY (paper_id, tag_id),
+				FOREIGN KEY (paper_id) REFERENCES papers(paper_id) ON DELETE CASCADE,
+				FOREIGN KEY (tag_id) REFERENCES tags(tag_id) ON DELETE CASCADE
+			);
+
 			CREATE TABLE IF NOT EXISTS papers (
 				paper_id INTEGER PRIMARY KEY AUTOINCREMENT,
 				category_id INTEGER NOT NULL,
+				publisher_id INTEGER NOT NULL,
 				paper_name TEXT NOT NULL,
-				description TEXT NOT NULL,
 				file_url TEXT NOT NULL,
+				description TEXT,
 				meta TEXT,
 				created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-				deleted INTEGER NOT NULL CHECK (deleted IN (0,1)), -- Boolean (0 = false, 1 = true)
+				deleted INTEGER NOT NULL DEFAULT 0 CHECK (deleted IN (0,1)),
 				FOREIGN KEY(category_id) REFERENCES categories(category_id) ON DELETE CASCADE
 			);
 
