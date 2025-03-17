@@ -7,21 +7,23 @@ const { verifyToken, checkRole } = require("../middleware/authMiddleware");
 Dev env admin:
 login - 
 {
-    "email": "main@admin03.com",
+    "email": "main@admin00.com",
     "password": "p@$swArd"
 }
 
 register -
 {
+    "institution": "Jomo Kenyatta University of Agriculture and technology",
     "fname": "Mark ",
     "lname": "Victor",
-    "email": "main@admin03.com",
+    "username": "",
+    "email": "main@admin00.com",
     "password": "p@$swArd"
 }
 */
 
 router.post("/register", authController.register);
-router.post("/register-admin",  authController.registerAdmin);
+router.post("/register-admin",  verifyToken, checkRole(['admin']), authController.registerAdmin);
 router.post("/login", authController.login);
 router.post("/logout", authController.logout);
 router.get("/user", verifyToken, authController.getUser);

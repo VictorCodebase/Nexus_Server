@@ -11,8 +11,7 @@ function setupDb() {
 		db.exec(` 
 			CREATE TABLE IF NOT EXISTS institutions (
 				institution_id INTEGER PRIMARY KEY AUTOINCREMENT,
-				institution_name TEXT NOT NULL,
-				institution_country TEXT NOT NULL
+				institution_name TEXT NOT NULL
 			);
 
 			CREATE TABLE IF NOT EXISTS users (
@@ -23,8 +22,8 @@ function setupDb() {
 				username TEXT NOT NULL,
 				email TEXT UNIQUE NOT NULL,
 				role TEXT NOT NULL,
-				created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 				password TEXT NOT NULL,
+				created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 				FOREIGN KEY (institution_id) REFERENCES institutions(institution_id) ON DELETE CASCADE
 			);
 

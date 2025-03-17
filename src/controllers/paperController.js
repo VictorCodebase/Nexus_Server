@@ -79,7 +79,6 @@ const getPapers = (req, res) => {
 };
 
 const getPaperById = (req, res) => {
-	// TODO: implement getPaperById method
 	message = req.query.message;
 	temp_res = { "server res: ": "Endpoint depreciated, do paper filtering"};
 	res.status(500).json(temp_res);

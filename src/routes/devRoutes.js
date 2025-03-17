@@ -5,7 +5,7 @@ const { verifyToken, checkRole } = require("../middleware/authMiddleware");
 const { ensurePathExists } = require("../middleware/pathMiddleware");
 
 router.delete("/tables", ensurePathExists("../backups"), verifyToken, checkRole(["admin"]), devController.resetTables);
-router.delete("/table", verifyToken, checkRole(["admin"]), devController.resetTable);
+router.delete("/table", devController.resetTable);
 router.get("/restore", verifyToken, checkRole(["admin"]), devController.restoreTables);
 router.get("/readtable", verifyToken, checkRole(["admin"]), devController.readTable);
 
