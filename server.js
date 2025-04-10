@@ -37,13 +37,6 @@ app.get("/api", (req, res) => {
 	});
 });
 
-app.get("/api/research_papers", (req, res) => {
-	res.status(500).json({ message: "api depreciated" });
-});
-
-app.get("/test_db", (req, res) => {
-	const message = req.query.message;
-});
 
 app.listen(port, () => {
 	console.log("Node server running on port", port);
