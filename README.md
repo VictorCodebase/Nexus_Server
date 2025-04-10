@@ -1,9 +1,6 @@
 # Nexus: Research Paper Repository
 
-# 🚀 Nexus: Research Paper Repository
-
-
-## 📚 Project Documentation
+## Project Documentation
 
 | Directory | Documentation | Purpose |
 |-----------|---------------|---------|
@@ -16,6 +13,7 @@
 ---
 
 ## Overview
+
 Nexus is a research paper repository backend built with Node.js following the MVC (Model-View-Controller) architecture. This system allows users to browse, search, and upload research papers with appropriate categorization and tagging.
 
 ## System Architecture
@@ -143,7 +141,6 @@ graph TB
     PaperController -->|"Stores files"| S3Storage
 ```
 
-
 The backend connects to Backblaze B2 cloud storage (S3-compatible) for file storage and uses SQLite for database persistence.
 
 ```
@@ -183,6 +180,7 @@ Nexus uses JWT (JSON Web Token) authentication with the following characteristic
 ## Data Models
 
 ### Main Entities
+
 - **Users**: System users with roles (Admin/Author)
 - **Papers**: Research paper documents with metadata
 - **Categories**: Classification hierarchy for papers
@@ -190,6 +188,7 @@ Nexus uses JWT (JSON Web Token) authentication with the following characteristic
 - **Institutions**: Organizations associated with users
 
 ### Relationships
+
 - A paper belongs to one category
 - A paper can have multiple tags
 - A paper can have multiple authors
@@ -202,18 +201,23 @@ Nexus uses JWT (JSON Web Token) authentication with the following characteristic
 Nexus exposes a RESTful API organized into logical groups:
 
 ### Auth API (`/api/auth/*`)
+
 User registration, authentication, and session management
 
 ### Papers API (`/api/papers/*`)
+
 Paper upload, retrieval, searching, and management
 
 ### Categories API (`/api/categories/*`)
+
 Research category management
 
 ### Tags API (`/api/tags/*`)
+
 Tag creation and assignment
 
 ### Dev Tools (`/dev/*`)
+
 Development utilities for database management (admin only)
 
 ---
@@ -221,6 +225,7 @@ Development utilities for database management (admin only)
 ## External Integrations
 
 ### Backblaze B2 Storage
+
 - S3-compatible cloud storage for research papers
 - Public read access for downloaded papers
 - Custom path structure: `research-papers/[timestamp]-[filename]`
@@ -240,9 +245,11 @@ Development utilities for database management (admin only)
 ## Development Tools
 
 ### Local File Storage
+
 Development mode supports local file storage in the `uploads` directory
 
 ### Database Management
+
 Development endpoints for database reset, inspection, and restoration
 
 ---
@@ -270,6 +277,7 @@ Development endpoints for database reset, inspection, and restoration
 ## Configuration Requirements
 
 ### Environment Variables
+
 Required environment variables for system operation:
 
 | Variable | Purpose | Example |
@@ -286,11 +294,13 @@ Required environment variables for system operation:
 ## Getting Started
 
 ### Prerequisites
+
 - Node.js (v14+)
 - npm or yarn
 - Backblaze B2 account (or local storage for development)
 
 ### Installation
+
 1. Clone the repository
 2. Install dependencies: `npm install`
 3. Set up environment variables (see `.env.example`)
@@ -298,6 +308,7 @@ Required environment variables for system operation:
 5. Start server: `npm start`
 
 ### Development Mode
+
 Run with: `npm run dev`
 
 ---
