@@ -8,8 +8,8 @@
 | Directory | Documentation | Purpose |
 |-----------|---------------|---------|
 | [Controllers](/controllers-documentation) | [Controllers Documentation](src/controllers/controllers.md) | Request handling and business logic |
-| [Config](/config-documentation) | [Config Documentation](/config-documentation) | System configuration and external services |
-| [Routes](/routes.md) | [Routes Documentation](/routes.md) | API endpoint definitions |
+| [Config](/config-documentation) | [Config Documentation](src/config/config.md) | System configuration and external services |
+| [Routes](/routes.md) | [Routes Documentation](src/routes/routes.md) | API endpoint definitions |
 | Models | Not available | Data access and database operations |
 | Middleware | Not available | Request processing and authentication |
 
