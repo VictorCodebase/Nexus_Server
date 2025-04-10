@@ -1,5 +1,33 @@
 # Nexus: Research Paper Repository
 
+# 🚀 Nexus: Research Paper Repository
+
+
+## 📚 Project Documentation
+
+| Directory | Documentation | Purpose |
+|-----------|---------------|---------|
+| [Controllers](/controllers-documentation) | [Controllers Documentation](/controllers-documentation) | Request handling and business logic |
+| [Config](/config-documentation) | [Config Documentation](/config-documentation) | System configuration and external services |
+| [Routes](/routes.md) | [Routes Documentation](/routes.md) | API endpoint definitions |
+| Models | Not available | Data access and database operations |
+| Middleware | Not available | Request processing and authentication |
+
+---
+
+## Overview
+Nexus is a research paper repository backend built with Node.js following the MVC (Model-View-Controller) architecture. This system allows users to browse, search, and upload research papers with appropriate categorization and tagging.
+
+## System Architecture
+
+Nexus follows a classic MVC architecture with clear separation of concerns:
+
+1. **Models**: Data access layer interfacing with SQLite database
+2. **Controllers**: Business logic handling HTTP requests and responses 
+3. **Routes**: API endpoint definitions and routing
+4. **Config**: System configuration and integrations
+5. **Middleware**: Request processing and authentication
+
 ```mermaid
 graph TB
     User((User))
@@ -115,19 +143,6 @@ graph TB
     PaperController -->|"Stores files"| S3Storage
 ```
 
-
-## Overview
-Nexus is a research paper repository backend built with Node.js following the MVC (Model-View-Controller) architecture. This system allows users to browse, search, and upload research papers with appropriate categorization and tagging.
-
-## System Architecture
-
-Nexus follows a classic MVC architecture with clear separation of concerns:
-
-1. **Models**: Data access layer interfacing with SQLite database
-2. **Controllers**: Business logic handling HTTP requests and responses 
-3. **Routes**: API endpoint definitions and routing
-4. **Config**: System configuration and integrations
-5. **Middleware**: Request processing and authentication
 
 The backend connects to Backblaze B2 cloud storage (S3-compatible) for file storage and uses SQLite for database persistence.
 
