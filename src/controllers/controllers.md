@@ -111,6 +111,8 @@ Development utilities for database management.
 | `resetTables` | Resets all database tables | `DELETE /dev/tables` | None |
 | `restoreTables` | Restores database from backup | `GET /dev/restore` | `backupFile` |
 
+> ! For the `readTable` api, ensure the table is included in the ALLOWED_TABLES in the devModel
+
 **Dependencies:**
 - `devModel`: For development database operations
 

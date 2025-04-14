@@ -20,6 +20,12 @@ register -
     "email": "main@admin00.com",
     "password": "p@$swArd"
 }
+
+Dev env author
+{
+    "email": "regular@author00.com",
+    "password": "p@$swArd"
+}
 */
 
 router.post("/register", authController.register);

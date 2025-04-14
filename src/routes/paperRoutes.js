@@ -36,7 +36,7 @@ router.post(
 ); // Upload paper
 
 //TODO: Check if all required fields are filled before accepting upload
-router.post("/local", ensurePathExists("../uploads"), localstore.single("file"), paperController.localUploadPaper); //upload paper locally
+router.post("/local", verifyToken, checkRole(["author", "admin"]), ensurePathExists("../uploads"), localstore.single("file"), paperController.localUploadPaper); //upload paper locally
 router.get("", paperController.getPapers);
 
 // router.get("/:id", paperController.getPaperById);

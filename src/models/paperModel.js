@@ -1,4 +1,5 @@
 const db = require("../config/dbConfig");
+const { readUserById } = require("./userModel");
 
 const createPaper = (category_id, publisher_id, paper_name, file_url, description, meta = null, tags = null, coauthors = null) => {
 	const deleted = 0;
@@ -29,6 +30,13 @@ const createPaper = (category_id, publisher_id, paper_name, file_url, descriptio
 		if (coauthors.length > 0) {
 			const authorStmt = db.prepare("INSERT INTO author_papers (rauthor_id, rpaper_id) VALUES (?, ?)");
 			const allAuthors = new Set([Number(publisher_id), ...coauthors]);
+
+			coauthors.forEach(author => {
+				const author_details = readUserById(author)
+				if (!author_details){
+					throw new Error(`Added co-author id(${author}) does not exist`)
+				}
+			});
 
 			const insertAuthors = db.transaction((author_ids) => {
 				for (const authorId of author_ids) {
@@ -111,7 +119,6 @@ const getPapers = (filters, offset = 0, limit = 30) => {
 		return null;
 	}
 };
-
 
 module.exports = {
 	createPaper,
