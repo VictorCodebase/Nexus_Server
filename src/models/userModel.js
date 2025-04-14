@@ -37,8 +37,23 @@ const readUserById = (id) => {
 	return stmt.get(id);
 };
 
+const getAuthors = (query, limit=10) => {
+	let stmt = db.prepare(`
+	SELECT DISTINCT id, fname, lname, username, institution_id
+	FROM users
+	WHERE (users.fname LIKE ? OR users.lname LIKE ? OR users.username LIKE ?) AND role='Author'
+	LIMIT ?
+	`);
+	
+	const authors = stmt.all(`%${query}%`, `%${query}%`, `%${query}%`, limit);
+	console.log("Fetched authors: ", authors)
+	return authors
+
+}
+
 module.exports = {
 	createUser,
 	readUserByMail,
 	readUserById,
+	getAuthors,
 };

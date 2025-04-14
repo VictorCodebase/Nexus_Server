@@ -3,7 +3,7 @@ const app = express();
 const cors = require("cors");
 const dotenv = require("dotenv");
 const port = 5000;
-const database = require("./src/config/dbSetupConfig")
+const database = require("./src/config/dbSetupConfig");
 
 dotenv.config(); //process.env available
 
@@ -16,27 +16,28 @@ const authRoutes = require("./src/routes/authRoutes");
 const paperRoutes = require("./src/routes/paperRoutes");
 const categoryRoutes = require("./src/routes/categoryRoutes");
 const tagRoutes = require("./src/routes/tagRoutes");
-const devRoutes = require("./src/routes/devRoutes")
+const userRoutes = require("./src/routes/userRoutes");
+const devRoutes = require("./src/routes/devRoutes");
 
 // Use routes
 app.use("/api/auth", authRoutes);
 app.use("/api/papers", paperRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/tags", tagRoutes);
-app.use("/dev", devRoutes)
+app.use("/api/users", userRoutes);
+app.use("/dev", devRoutes);
 
 // setup db
 database.setupDb();
 
 app.get("/api", (req, res) => {
 	const message = req.query.message;
-	
+
 	res.json({
 		"Server response": "Server reached successfully",
 		"client message": message || "No message received from client",
 	});
 });
-
 
 app.listen(port, () => {
 	console.log("Node server running on port", port);
