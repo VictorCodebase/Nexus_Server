@@ -119,8 +119,53 @@ const getPapers = (filters, offset = 0, limit = 30) => {
 		return null;
 	}
 };
+const getPaperById = (paperId) => {
+	try {
+		const stmt = db.prepare("SELECT * FROM papers WHERE paper_id = ? AND deleted = 0");
+		const paper = stmt.get(paperId);
+		if (!paper) return null;
+
+		// Fetch associated tags
+		const tagStmt = db.prepare("SELECT tag_id FROM paper_tags WHERE paper_id = ?");
+		const tags = tagStmt.all(paperId).map(tag => tag.tag_id);
+
+		// Fetch co-authors
+		const coauthorStmt = db.prepare("SELECT rauthor_id FROM author_papers WHERE rpaper_id = ?");
+		const coauthors = coauthorStmt.all(paperId).map(author => author.rauthor_id);
+
+		return {
+			...paper,
+			tags,
+			coauthors
+		};
+	} catch (error) {
+		console.error("Error fetching paper by ID:", error.message);
+		return null;
+	}
+};
+
+const getPapersByUserId = (userId) => {
+    try {
+        // Join the `papers` table with the `users` table to filter by publisher name
+        const stmt = db.prepare(`
+            SELECT papers.* 
+            FROM papers
+            JOIN users ON papers.publisher_id = users.id
+            WHERE users.username = ? AND papers.deleted = 0
+        `);
+        const papers = stmt.all(publisherName);
+
+        return papers;
+    } catch (error) {
+        console.error("Error fetching papers by publisher name:", error.message);
+        throw error;
+    }
+};
+
 
 module.exports = {
 	createPaper,
 	getPapers,
+	getPaperById,
+	getPapersByUserId,
 };
