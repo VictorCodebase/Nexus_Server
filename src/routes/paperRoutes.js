@@ -42,8 +42,8 @@ router.get("/:id", paperController.getPaperById);
 
 
 // router.get("/:id", paperController.getPaperById);
-router.put("/:id", verifyToken, checkRole(["author", "admin"]), paperController.updatePaper); //TODO: Make this work
-router.delete("/:id", verifyToken, checkRole(["admin", "author"]), paperController.deletePaper);
+router.put("/:id", verifyToken,  paperController.updatePaper); //TODO: Make this work
+router.delete("/:id", verifyToken, paperController.deletePaper);   //removed the checkrole function
 
 //get papers according to user id
 router.get("/user", verifyToken, paperController.getUserPapers);

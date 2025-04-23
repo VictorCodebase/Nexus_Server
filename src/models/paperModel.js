@@ -161,11 +161,30 @@ const getPapersByUserId = (userId) => {
         throw error;
     }
 };
+const deletePaper = (paperId)=> {
+	try{
+		const stmt = db.prepare(
+			`
+			DELETE FROM papers
+			WHERE paper_id = ?
+			`
+		);
+		const result = stmt.run(paperId);
+
+		// check if any row was deleted
+		
+		return result.changes > 0;
+	} catch(error){
+		console.error("Error deleting paper:",error.message);
+		throw error;
+	}
+};
 
 
 module.exports = {
 	createPaper,
 	getPapers,
 	getPaperById,
+	deletePaper,
 	getPapersByUserId,
 };

@@ -133,15 +133,21 @@ const updatePaper = (req, res) => {
 const deletePaper = (req, res) => {
 	const paperId = req.params.id;
 
-	const test_deleted = {
-		paperId: 1,
-	}; // TODO: run function to delete
+	try{
+		//calling the model function to delete the papers
+		const deleted = paperModel.deletePaper(paperId);
 
-	if (!test_deleted) {
-		return res.status(404).json({ message: "resource does not exist" });
+		if (!deleted){
+			return res.status(404).json({message:"Paper not found or already deleted"});
+
+		}
+
+		res.status(200).json({message:"Paper deleted successfully"});
 	}
-
-	res.status(200).json({ message: "Paper deleted successfully" });
+	catch (error) {
+		console.error("Error deleting paper: ", error);
+		return res.status(500).json({ message: "Server error" });
+	}
 };
 
 const getUserPapers = ( req,res) => {
