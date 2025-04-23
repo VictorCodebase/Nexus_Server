@@ -10,7 +10,7 @@ const uploadPaper = (req, res) => {
 	console.log("file upload location: ", fileurl);
 
 	res.status(200).json({
-		message: "page uploaded successfully",
+		message: "paper uploaded successfully",
 		fileurl: fileurl,
 	});
 };
@@ -78,9 +78,11 @@ const getPapers = (req, res) => {
 	}
 };
 
+
+
 const getPaperById = (req, res) => {
 	message = req.query.message;
-	temp_res = { "server res: ": "Endpoint depreciated, do paper filtering"};
+	temp_res = { "message": "Endpoint depreciated, do paper filtering"};
 	res.status(500).json(temp_res);
 };
 
