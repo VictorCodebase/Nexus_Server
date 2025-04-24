@@ -39,6 +39,11 @@ app.get("/api", (req, res) => {
 	});
 });
 
+const path = require("path");
+
+// Serve static files from the uploads directory
+app.use("/uploads", express.static(path.join(__dirname, "src/uploads")));
+
 app.listen(port, () => {
 	console.log("Node server running on port", port);
 });

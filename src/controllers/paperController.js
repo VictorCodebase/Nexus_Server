@@ -23,16 +23,38 @@ const localUploadPaper = (req, res) => {
 	const fileUrl = req.fileUrl;
 	const fileName = req.body.name;
 	const category = req.body.category;
-	const publisher = req.body.publisher;
-	let coauthors = req.body.coauthors || [];
-	let tags = req.body.tags || [];
+	const publisher = req.body.publish
+	// since they are being assigned values
+	let coauthors = req.body.coauthors || '[]'
+	let tags = req.body.tags || '[]';
+
 	const description = req.body.description;
 	const meta = req.body.meta;
 
 	console.log(req.body);
 
-	if (tags) tags = JSON.parse(tags);
-	if (coauthors) coauthors = JSON.parse(coauthors);
+	if (typeof tags === "string") {
+		try{
+			tags = JSON.parse(tags);
+		}
+		catch (error) {
+			console.error("Error parsing tags: ", error);
+			return res.status(400).json({ error: "Error parsing tags" });
+		}
+	}
+	if (typeof coauthors === "string") {
+		try{
+			coauthors = JSON.parse(coauthors);
+		}
+		catch (error) {
+			console.error("Error parsing coauthors: ", error);
+			return res.status(400).json({ error: "Error parsing coauthors" });
+		}
+	}
+
+	// if (tags) tags = JSON.parse(tags);
+	// if (coauthors) coauthors = JSON.parse(coauthors)
+
 
 	if (!fileName) return res.status(400).json({ error: "expected file name in the body as: name:<file_name>" });
 	if (!category) return res.status(400).json({ error: "expected file category in the body as: category:<1>" });
@@ -129,10 +151,79 @@ const getPapers = (req, res) => {
 };
 
 const getPaperById = (req, res) => {
-	message = req.query.message;
-	temp_res = { message: "Endpoint depreciated, do paper filtering" };
-	res.status(500).json(temp_res);
+	const paperId = req.params.id;
+
+	try {
+		const paper = paperModel.getPaperById(paperId);
+
+		if (!paper) {
+			return res.status(404).json({ message: "Paper not found" });
+		}
+
+		return res.status(200).json(paper);
+	} catch (error) {
+		console.error("Error fetching paper by ID:", error);
+		return res.status(500).json({ message: "Server error" });
+	}
 };
+
+
+const updatePaper = (req, res) => {
+	const paperId = req.params.id;
+
+	const test_updated = {
+		paperId: 1,
+	};
+
+	if (!test_updated) {
+		return res.status(404).json({ message: "resource does not exist" });
+	}
+
+	res.status(200).json({ message: "paper updated successfully" });
+};
+
+const deletePaper = (req, res) => {
+	const paperId = req.params.id;
+
+	try{
+		//calling the model function to delete the papers
+		const deleted = paperModel.deletePaper(paperId);
+
+		if (!deleted){
+			return res.status(404).json({message:"Paper not found or already deleted"});
+
+		}
+
+		res.status(200).json({message:"Paper deleted successfully"});
+	}
+	catch (error) {
+		console.error("Error deleting paper: ", error);
+		return res.status(500).json({ message: "Server error" });
+	}
+};
+
+const getUserPapers = ( req,res) => {
+	try{
+		// extract the user id from the token
+		const publisherName = req.user.username ;
+
+		//fetch the papers owned by the logged in user
+		const papers = paperModel.getPapersByUserId(publisherName);
+
+		if ( !papers || papers.length ===0 ){
+			return res.status(404).json({ message: "No papers found for this user" });
+
+		}
+		return res.status(200).json({ papers });
+
+
+	}
+	catch (error) {
+		console.error("Error fetching user papers: ", error);
+		return res.status(500).json({ message: "Server error" });
+	}
+}
+
 
 module.exports = {
 	uploadPaper,
@@ -141,4 +232,5 @@ module.exports = {
 	getPapers,
 	getPaperById,
 	deletePaper,
+	getUserPapers,
 };
