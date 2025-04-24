@@ -31,10 +31,10 @@ const createPaper = (category_id, publisher_id, paper_name, file_url, descriptio
 			const authorStmt = db.prepare("INSERT INTO author_papers (rauthor_id, rpaper_id) VALUES (?, ?)");
 			const allAuthors = new Set([Number(publisher_id), ...coauthors]);
 
-			coauthors.forEach(author => {
-				const author_details = readUserById(author)
-				if (!author_details){
-					throw new Error(`Added co-author id(${author}) does not exist`)
+			coauthors.forEach((author) => {
+				const author_details = readUserById(author);
+				if (!author_details) {
+					throw new Error(`Added co-author id(${author}) does not exist`);
 				}
 			});
 
@@ -49,7 +49,69 @@ const createPaper = (category_id, publisher_id, paper_name, file_url, descriptio
 		throw new Error(`Error adding co-authors: ${error.message}`);
 	}
 
-	return paper_id;
+	try{
+		const createdPaper = getPaperById(paper_id)
+		return createdPaper
+	}catch(err){
+		throw new Error("Could not find created paper")
+	}
+};
+
+const updatePaper = (paper_id, fields = {}) => {
+	const existingPaper = db.prepare("SELECT * FROM papers WHERE paper_id = ? AND deleted = 0").get(paper_id);
+	if (!existingPaper) throw new Error(`Paper with id ${paper_id} does not exist or is deleted`);
+
+	const allowedFields = ["category_id", "publisher_id", "paper_name", "file_url", "description", "meta"];
+	const updateKeys = Object.keys(fields).filter((key) => allowedFields.includes(key) && fields[key] != null);
+
+	if (updateKeys.length === 0 && !("tags" in fields) && !("coauthors" in fields)) {
+		throw new Error("No valid fields provided for update");
+	}
+
+	db.transaction(() => {
+		if (updateKeys.length > 0) {
+			const setClause = updateKeys.map((field) => `${field} = ?`).join(", ");
+			const values = updateKeys.map((field) => fields[field]);
+			const stmt = db.prepare(`UPDATE papers SET ${setClause} WHERE paper_id = ?`);
+			stmt.run(...values, paper_id);
+		}
+
+		if ("tags" in fields && fields.tags != null) {
+			db.prepare("DELETE FROM paper_tags WHERE paper_id = ?").run(paper_id);
+			const tagStmt = db.prepare("INSERT INTO paper_tags (paper_id, tag_id) VALUES (?, ?)");
+			for (const tag_id of fields.tags) {
+				tagStmt.run(paper_id, tag_id);
+			}
+		}
+
+		if ("coauthors" in fields && fields.coauthors != null) {
+			db.prepare("DELETE FROM author_papers WHERE rpaper_id = ?").run(paper_id);
+			const authorStmt = db.prepare("INSERT INTO author_papers (rauthor_id, rpaper_id) VALUES (?, ?)");
+			const authorSet = new Set([Number(fields.publisher_id ?? existingPaper.publisher_id), ...fields.coauthors.map(Number)]);
+
+			fields.coauthors.forEach((authorId) => {
+				if (!readUserById(authorId)) {
+					throw new Error(`Author with id: ${authorId} does not exist`);
+				}
+			});
+
+			for (const id of authorSet) {
+				authorStmt.run(id, paper_id);
+			}
+		}
+	})();
+
+	try {
+		const updatedPaper = getPaperById(paper_id);
+		return updatedPaper;
+	} catch (err) {
+		throw new Error(`updated paper could not be found`);
+	}
+};
+
+const getPaperById = (id) => {
+	const stmt = db.prepare("SELECT * FROM papers WHERE paper_id = ?");
+	return stmt.get(id);
 };
 
 const getPapers = (filters, offset = 0, limit = 30) => {
@@ -122,5 +184,6 @@ const getPapers = (filters, offset = 0, limit = 30) => {
 
 module.exports = {
 	createPaper,
+	updatePaper,
 	getPapers,
 };

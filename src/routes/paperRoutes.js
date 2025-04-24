@@ -40,7 +40,7 @@ router.post("/local", verifyToken, checkRole(["author", "admin"]), ensurePathExi
 router.get("", paperController.getPapers);
 
 // router.get("/:id", paperController.getPaperById);
-router.put("/:id", verifyToken, checkRole(["author", "admin"]), paperController.updatePaper); //TODO: Make this work
+router.put("/", verifyToken, checkRole(["author", "admin"]), paperController.updateLocalPaper); //TODO: Make this work
 router.delete("/:id", verifyToken, checkRole(["admin", "author"]), paperController.deletePaper);
 
 module.exports = router;
