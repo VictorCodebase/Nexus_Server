@@ -8,10 +8,10 @@ const register = async (req, res) => {
 		let { institution, username, fname, lname, email, password } = req.body;
 		const role = "Author";
 
-		if (!fname) res.status(400).json({ error: "fname is required" });
-		if (!lname) res.status(400).json({ error: "lname is required" });
-		if (!email) res.status(400).json({ error: "email is required" });
-		if (!password) res.status(400).json({ error: "password is required" });
+		if (!fname) return res.status(400).json({ error: "fname is required" });
+		if (!lname) return res.status(400).json({ error: "lname is required" });
+		if (!email) return res.status(400).json({ error: "email is required" });
+		if (!password) return res.status(400).json({ error: "password is required" });
 		if (!username || username == "") username = fname + " " + lname;
 
 		// Check if the email is already registered
@@ -38,10 +38,10 @@ const registerAdmin = async (req, res) => {
 		let { institution, username, fname, lname, email, password } = req.body;
 		const role = "Admin";
 
-		if (!fname) res.status(400).json({ error: "fname is required" });
-		if (!lname) res.status(400).json({ error: "lname is required" });
-		if (!email) res.status(400).json({ error: "email is required" });
-		if (!password) res.status(400).json({ error: "password is required" });
+		if (!fname) return res.status(400).json({ error: "fname is required" });
+		if (!lname) return res.status(400).json({ error: "lname is required" });
+		if (!email) return res.status(400).json({ error: "email is required" });
+		if (!password) return res.status(400).json({ error: "password is required" });
 		if (!username || username == "") username = fname + " " + lname;
 
 		// Check if the email already exists

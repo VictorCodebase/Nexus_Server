@@ -94,7 +94,7 @@ const recreateTables = () => {
 };
 
 const readTable = (table) => {
-	const ALLOWED_TABLES = ["papers", "users", "categories", "author_papers"];
+	const ALLOWED_TABLES = ["papers", "users", "categories", "author_papers", "tags", "paper_tags"];
 
 	if (!ALLOWED_TABLES.includes(table)){
 		throw new Error("Unrecognized table")

@@ -10,7 +10,7 @@ const uploadPaper = (req, res) => {
 	console.log("file upload location: ", fileurl);
 
 	res.status(200).json({
-		message: "page uploaded successfully",
+		message: "paper uploaded successfully",
 		fileurl: fileurl,
 	});
 };
@@ -27,6 +27,7 @@ const localUploadPaper = (req, res) => {
 	// since they are being assigned values
 	let coauthors = req.body.coauthors || '[]'
 	let tags = req.body.tags || '[]';
+
 	const description = req.body.description;
 	const meta = req.body.meta;
 
@@ -54,12 +55,13 @@ const localUploadPaper = (req, res) => {
 	// if (tags) tags = JSON.parse(tags);
 	// if (coauthors) coauthors = JSON.parse(coauthors)
 
+
 	if (!fileName) return res.status(400).json({ error: "expected file name in the body as: name:<file_name>" });
 	if (!category) return res.status(400).json({ error: "expected file category in the body as: category:<1>" });
 	if (!description) return res.status(400).json({ error: "expected file description in the body as: description:<file_description>" });
 	if (!publisher) return res.status(400).json({ error: "expected file publisher in the body as: publisher:<1>" });
 	if (!Array.isArray(tags)) return res.status(400).json({ error: "tags should be an array" });
-	if (!Array.isArray(coauthors)) return res.status(400).json({error: "coathors should be an array"})
+	if (!Array.isArray(coauthors)) return res.status(400).json({ error: "coathors should be an array" });
 	if (tags.length > 10) return res.status(400).json({ error: "Maximum number of tags associatable to a paper exceeded" });
 
 	const paper = paperModel.createPaper(category, publisher, fileName, fileUrl, description, meta, tags, coauthors);
@@ -68,8 +70,58 @@ const localUploadPaper = (req, res) => {
 		console.error("Paper creation failed: ", paper);
 		return res.status(500).json({ error: "Error occured creating file" });
 	} else {
-		return res.status(200).json({ message: "Success" });
+		return res.status(200).json({ message: "Success", paper: paper });
 	}
+};
+
+const updateLocalPaper = (req, res) => {
+	if (!req.body.id) return res.status(400).json({ error: "Paper id not provided" });
+	const paper_id = Number(req.body.id);
+
+	const fields = {
+		category_id: req.body.category,
+		publisher_id: req.body.publisher,
+		paper_name: req.body.name,
+		description: req.body.description,
+		meta: req.body.meta,
+		tags: req.body.tags,
+		coauthors: req.body.coauthors,
+	};
+	if (req.file) fields.fileUrl = req.file.location;
+
+	try {
+		const updatedPaper = paperModel.updatePaper(paper_id, fields);
+
+		if (!updatedPaper) {
+			console.error("Error updating paper. Paper:", updatedPaper)
+			return res.status(500).json({ error: "error occured updating file" });
+		}
+		res.json({
+			message: "success",
+			paper: updatedPaper,
+		});
+	} catch (err) {
+		console.log("Error updating paper", err);
+		return res.status(500).json({ error: err.message });
+	}
+
+	console.log("Update body: ", req.body);
+
+	res.status(500).json({ message: "Method reached; still under development" });
+};
+
+const deletePaper = (req, res) => {
+	const paperId = req.params.id;
+
+	const test_deleted = {
+		paperId: 1,
+	}; // TODO: run function to delete
+
+	if (!test_deleted) {
+		return res.status(404).json({ message: "resource does not exist" });
+	}
+
+	res.status(200).json({ message: "Paper deleted successfully" });
 };
 
 const getPapers = (req, res) => {
@@ -172,12 +224,13 @@ const getUserPapers = ( req,res) => {
 	}
 }
 
+
 module.exports = {
 	uploadPaper,
 	localUploadPaper,
+	updateLocalPaper,
 	getPapers,
 	getPaperById,
-	updatePaper,
 	deletePaper,
 	getUserPapers,
 };
