@@ -50,7 +50,7 @@ const createPaper = (category_id, publisher_id, paper_name, file_url, descriptio
 	}
 
 	try{
-		const createdPaper = getPaperById(paper_id)
+		const createdPaper = getPaperObjectById(paper_id);
 		return createdPaper
 	}catch(err){
 		throw new Error("Could not find created paper")
@@ -102,14 +102,14 @@ const updatePaper = (paper_id, fields = {}) => {
 	})();
 
 	try {
-		const updatedPaper = getPaperById(paper_id);
+		const updatedPaper = getPaperObjectById(paper_id);
 		return updatedPaper;
 	} catch (err) {
 		throw new Error(`updated paper could not be found`);
 	}
 };
 
-const getPaperById = (id) => {
+const getPaperObjectById = (id) => {
 	const stmt = db.prepare("SELECT * FROM papers WHERE paper_id = ?");
 	return stmt.get(id);
 };

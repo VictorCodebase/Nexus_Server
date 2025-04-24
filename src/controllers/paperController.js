@@ -110,20 +110,6 @@ const updateLocalPaper = (req, res) => {
 	res.status(500).json({ message: "Method reached; still under development" });
 };
 
-const deletePaper = (req, res) => {
-	const paperId = req.params.id;
-
-	const test_deleted = {
-		paperId: 1,
-	}; // TODO: run function to delete
-
-	if (!test_deleted) {
-		return res.status(404).json({ message: "resource does not exist" });
-	}
-
-	res.status(200).json({ message: "Paper deleted successfully" });
-};
-
 const getPapers = (req, res) => {
 	try {
 		const { id, category, tag, publisher_id, author_id, q, offset, limit } = req.query;
