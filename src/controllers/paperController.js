@@ -84,7 +84,7 @@ const updateLocalPaper = (req, res) => {
 			console.error("Error updating paper. Paper:", updatedPaper)
 			return res.status(500).json({ error: "error occured updating file" });
 		}
-		res.json({
+		return res.json({ 
 			message: "success",
 			paper: updatedPaper,
 		});
@@ -93,9 +93,6 @@ const updateLocalPaper = (req, res) => {
 		return res.status(500).json({ error: err.message });
 	}
 
-	console.log("Update body: ", req.body);
-
-	res.status(500).json({ message: "Method reached; still under development" });
 };
 
 const getPapers = (req, res) => {

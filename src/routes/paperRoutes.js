@@ -39,10 +39,6 @@ router.post(
 router.post("/local", verifyToken, ensurePathExists("../uploads"), localstore.single("file"), paperController.localUploadPaper); //upload paper locally
 router.get("", paperController.getPapers);
 router.get("/:id", paperController.getPaperById);
-
-
-// router.get("/:id", paperController.getPaperById);
-
 router.put("/", verifyToken, checkRole(["author", "admin"]), paperController.updateLocalPaper); 
 router.delete("/:id", verifyToken, checkRole(["admin", "author"]), paperController.deletePaper);
 
