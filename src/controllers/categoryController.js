@@ -9,8 +9,29 @@ const getCategories = (req, res) => {
 };
 
 const addCategories = (req, res) => {
-	const { category } = req.body;
+	const { categories } = req.body;
 	// return res.status(403).json({ message: "Forbidden: cannot add new categories" });
+
+	let successfullyAddedCategories = [];
+	let failed = []
+
+	if (Array.isArray(categories)) {
+		categories.forEach((category) => {
+			if (readCategoryByName(category)) {
+				console.warn(`category ${category} exists`);
+				failed.push(category)
+			} else if (createCategory(category)) {
+				successfullyAddedCategories.push(category);
+			}
+		});
+
+		return res.status(200).json({
+			message: "task complete",
+			num_of_failed: categories.length - successfullyAddedCategories.length,
+			failed: failed
+		});
+	}
+
 	if (readCategoryByName(category)) {
 		return res.status(409).json({ message: "Category exists" });
 	}
