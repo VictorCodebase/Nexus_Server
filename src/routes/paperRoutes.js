@@ -43,7 +43,7 @@ router.get("/:id", paperController.getPaperById);
 
 // router.get("/:id", paperController.getPaperById);
 
-router.put("/", verifyToken, checkRole(["author", "admin"]), paperController.updateLocalPaper); //TODO: Make this work
+router.put("/", verifyToken, checkRole(["author", "admin"]), paperController.updateLocalPaper); 
 router.delete("/:id", verifyToken, checkRole(["admin", "author"]), paperController.deletePaper);
 
 //get papers according to user id

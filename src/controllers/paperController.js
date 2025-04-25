@@ -33,23 +33,11 @@ const localUploadPaper = (req, res) => {
 
 	console.log(req.body);
 
-	if (typeof tags === "string") {
-		try{
-			tags = JSON.parse(tags);
-		}
-		catch (error) {
-			console.error("Error parsing tags: ", error);
-			return res.status(400).json({ error: "Error parsing tags" });
-		}
-	}
-	if (typeof coauthors === "string") {
-		try{
-			coauthors = JSON.parse(coauthors);
-		}
-		catch (error) {
-			console.error("Error parsing coauthors: ", error);
-			return res.status(400).json({ error: "Error parsing coauthors" });
-		}
+	try {
+		if (typeof tags === "string") tags = JSON.parse(tags);
+		if (typeof coauthors === "string") coauthors = JSON.parse(coauthors);
+	} catch (err) {
+		return res.status(400).json({ error: "Error parsing tags or coauthors" });
 	}
 
 	// if (tags) tags = JSON.parse(tags);

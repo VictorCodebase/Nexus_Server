@@ -3,27 +3,28 @@ const { readUserById } = require("./userModel");
 
 const createPaper = (category_id, publisher_id, paper_name, file_url, description, meta = null, tags = null, coauthors = null) => {
 	const deleted = 0;
-	const stmt = db.prepare("INSERT INTO papers (category_id, publisher_id, paper_name, file_url, description, meta, deleted) VALUES(?,?,?,?,?,?,?)");
+	const tagJson = JSON.stringify(tags || []);
+	const stmt = db.prepare("INSERT INTO papers (category_id, publisher_id, paper_name, file_url, description, meta, tags, deleted) VALUES(?,?,?,?,?,?,?,?)");
 
-	const result = stmt.run(category_id, publisher_id, paper_name, file_url, description, meta, deleted);
+	const result = stmt.run(category_id, publisher_id, paper_name, file_url, description, meta, tagJson, deleted);
 	if (!result.changes) return null;
 
 	const paper_id = result.lastInsertRowid;
 
 	// Add all associated tags
-	try {
-		if (tags.length > 0) {
-			const tagStmt = db.prepare("INSERT INTO paper_tags (paper_id, tag_id) VALUES (?, ?)");
-			const insertMany = db.transaction((tags) => {
-				for (const tag_id of tags) {
-					tagStmt.run(paper_id, tag_id);
-				}
-			});
-			insertMany(tags);
-		}
-	} catch (error) {
-		throw new Error(`Error adding tags: ${error.message}`);
-	}
+	// try {
+	// 	if (tags.length > 0) {
+	// 		const tagStmt = db.prepare("INSERT INTO paper_tags (paper_id, tag_id) VALUES (?, ?)");
+	// 		const insertMany = db.transaction((tags) => {
+	// 			for (const tag_id of tags) {
+	// 				tagStmt.run(paper_id, tag_id);
+	// 			}
+	// 		});
+	// 		insertMany(tags);
+	// 	}
+	// } catch (error) {
+	// 	throw new Error(`Error adding tags: ${error.message}`);
+	// }
 
 	// Add all associated co-authors
 	try {
@@ -167,7 +168,8 @@ const getPapers = (filters, offset = 0, limit = 30) => {
 		}
 
 		// Append WHERE conditions correctly
-		query += ` WHERE ${conditions.join(" AND ")}`;
+		query += ` WHERE ${conditions.join(" AND papers.deleted = 0 AND ")}`;
+		
 
 		// Pagination
 		query += " ORDER BY papers.created_at DESC LIMIT ? OFFSET ?";

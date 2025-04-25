@@ -28,17 +28,17 @@ const checkRole = (roles) => {
 		}
 
 		if (userRole === "author") {
-			// TODO: Fetch paper from db
-			const test_paper = {
-				authorId: 1,
-			};
-			if (!test_paper) {
-				return res.status(404).json({ message: "Requested resource does not exist" });
-			}
+			// TODO: Ensure the paper belongs to the author
+			// const test_paper = {
+			// 	authorId: 1,
+			// };
+			// if (!test_paper) {
+			// 	return res.status(404).json({ message: "Requested resource does not exist" });
+			// }
 
-			if (test_paper.authorId !== Number(req.params.id)) {
-				return res.status(403).json({ message: "Forbidden: You can only modify your papers" });
-			}
+			// if (test_paper.authorId !== Number(req.params.id)) {
+			// 	return res.status(403).json({ message: "Forbidden: You can only modify your papers" });
+			// }
 
 			next();
 		} else if (userRole === "admin") {
