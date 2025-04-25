@@ -40,11 +40,13 @@ router.post("/local", verifyToken, ensurePathExists("../uploads"), localstore.si
 router.get("", paperController.getPapers);
 router.get("/:id", paperController.getPaperById);
 
+
 //? Chenge to this to ensure paper ownship. you could test it out :)
 // router.put("/", verifyToken, checkRole(["author", "admin"]), checkPaperAccess("edit"), paperController.updateLocalPaper);
 // router.delete("/:id", verifyToken, checkRole(["admin", "author"]), checkPaperAccess("delete"), paperController.deletePaper);
 router.put("/", verifyToken, checkRole(["author", "admin"]), paperController.updateLocalPaper);
 router.delete("/:id", verifyToken, checkRole(["admin", "author"]), paperController.deletePaper);
+
 
 //get papers according to user id
 router.get("/user", verifyToken, paperController.getUserPapers);
