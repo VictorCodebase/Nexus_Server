@@ -16,12 +16,10 @@ const getTags = (req, res) => {
 
 const addTags = (req, res) => {
 	//? Accepts multiple tags in a related field
-	const { field, tags } = req.body;
+	const { tags } = req.body;
 	let successfullyAddedTags = [];
 
-	if (!field || field.length === 0) {
-		return res.status(400).json({ error: "the key 'field' is either empty or not included" });
-	}
+	
 	if (!tags) {
 		return res.status(400).json({ error: "the key 'tags' is required in the body" });
 	}
@@ -34,7 +32,7 @@ const addTags = (req, res) => {
 
 	try {
 		for (const tag of tags) {
-			tagModel.createTag(field, tag);
+			tagModel.createTag(tag);
 			successfullyAddedTags.push({ tag, field });
 		}
 

@@ -3,27 +3,28 @@ const { readUserById } = require("./userModel");
 
 const createPaper = (category_id, publisher_id, paper_name, file_url, description, meta = null, tags = null, coauthors = null) => {
 	const deleted = 0;
-	const stmt = db.prepare("INSERT INTO papers (category_id, publisher_id, paper_name, file_url, description, meta, deleted) VALUES(?,?,?,?,?,?,?)");
+	const tagJson = JSON.stringify(tags || []);
+	const stmt = db.prepare("INSERT INTO papers (category_id, publisher_id, paper_name, file_url, description, meta, tags, deleted) VALUES(?,?,?,?,?,?,?,?)");
 
-	const result = stmt.run(category_id, publisher_id, paper_name, file_url, description, meta, deleted);
+	const result = stmt.run(category_id, publisher_id, paper_name, file_url, description, meta, tagJson, deleted);
 	if (!result.changes) return null;
 
 	const paper_id = result.lastInsertRowid;
 
 	// Add all associated tags
-	try {
-		if (tags.length > 0) {
-			const tagStmt = db.prepare("INSERT INTO paper_tags (paper_id, tag_id) VALUES (?, ?)");
-			const insertMany = db.transaction((tags) => {
-				for (const tag_id of tags) {
-					tagStmt.run(paper_id, tag_id);
-				}
-			});
-			insertMany(tags);
-		}
-	} catch (error) {
-		throw new Error(`Error adding tags: ${error.message}`);
-	}
+	// try {
+	// 	if (tags.length > 0) {
+	// 		const tagStmt = db.prepare("INSERT INTO paper_tags (paper_id, tag_id) VALUES (?, ?)");
+	// 		const insertMany = db.transaction((tags) => {
+	// 			for (const tag_id of tags) {
+	// 				tagStmt.run(paper_id, tag_id);
+	// 			}
+	// 		});
+	// 		insertMany(tags);
+	// 	}
+	// } catch (error) {
+	// 	throw new Error(`Error adding tags: ${error.message}`);
+	// }
 
 	// Add all associated co-authors
 	try {
@@ -69,6 +70,13 @@ const updatePaper = (paper_id, fields = {}) => {
 	}
 
 	db.transaction(() => {
+		// include tags in updateKeys if we're using the JSON approach
+		if ("tags" in fields && fields.tags != null) {
+			const tagJson = JSON.stringify(fields.tags || []);
+			updateKeys.push("tags");
+			fields.tags = tagJson;
+		}
+
 		if (updateKeys.length > 0) {
 			const setClause = updateKeys.map((field) => `${field} = ?`).join(", ");
 			const values = updateKeys.map((field) => fields[field]);
@@ -76,13 +84,14 @@ const updatePaper = (paper_id, fields = {}) => {
 			stmt.run(...values, paper_id);
 		}
 
-		if ("tags" in fields && fields.tags != null) {
-			db.prepare("DELETE FROM paper_tags WHERE paper_id = ?").run(paper_id);
-			const tagStmt = db.prepare("INSERT INTO paper_tags (paper_id, tag_id) VALUES (?, ?)");
-			for (const tag_id of fields.tags) {
-				tagStmt.run(paper_id, tag_id);
-			}
-		}
+		// Previous normalized tag storage (now disabled)
+		// if ("tags" in fields && fields.tags != null) {
+		// 	db.prepare("DELETE FROM paper_tags WHERE paper_id = ?").run(paper_id);
+		// 	const tagStmt = db.prepare("INSERT INTO paper_tags (paper_id, tag_id) VALUES (?, ?)");
+		// 	for (const tag_id of fields.tags) {
+		// 		tagStmt.run(paper_id, tag_id);
+		// 	}
+		// }
 
 		if ("coauthors" in fields && fields.coauthors != null) {
 			db.prepare("DELETE FROM author_papers WHERE rpaper_id = ?").run(paper_id);
@@ -110,7 +119,7 @@ const updatePaper = (paper_id, fields = {}) => {
 };
 
 const getPaperObjectById = (id) => {
-	const stmt = db.prepare("SELECT * FROM papers WHERE paper_id = ?");
+	const stmt = db.prepare("SELECT * FROM papers WHERE paper_id = ? AND deleted = 0");
 	return stmt.get(id);
 };
 
@@ -118,7 +127,6 @@ const getPapers = (filters, offset = 0, limit = 30) => {
 	let query = `
         SELECT DISTINCT papers.* 
         FROM papers 
-        LEFT JOIN paper_tags ON papers.paper_id = paper_tags.paper_id
         LEFT JOIN author_papers ON papers.paper_id = author_papers.rpaper_id
     `;
 	const params = [];
@@ -130,50 +138,46 @@ const getPapers = (filters, offset = 0, limit = 30) => {
 	let conditions = ["1=1"]; // Ensures correct WHERE clause handling
 
 	try {
-		// Filter by Paper ID
 		if (filters.id) {
 			conditions.push("papers.paper_id = ?");
 			params.push(Number(filters.id));
 		}
 
-		// Filter by Category
 		if (filters.category) {
 			conditions.push("papers.category_id = ?");
 			params.push(Number(filters.category));
 		}
 
-		// Filter by Tag
+		// Previous normalized tag filter (commented out)
+		// if (filters.tag) {
+		// 	conditions.push("paper_tags.tag_id = ?");
+		// 	params.push(Number(filters.tag));
+		// }
+
 		if (filters.tag) {
-			conditions.push("paper_tags.tag_id = ?");
-			params.push(Number(filters.tag));
+			conditions.push("papers.tags LIKE ?");
+			params.push(`%${filters.tag}%`);
 		}
 
-		// Filter by Publisher
 		if (filters.publisher_id) {
 			conditions.push("papers.publisher_id = ?");
 			params.push(Number(filters.publisher_id));
 		}
 
-		// Filter by Author
 		if (filters.author_id) {
 			conditions.push("author_papers.rauthor_id = ?");
 			params.push(Number(filters.author_id));
 		}
 
-		// Search Query (Title or Description)
 		if (filters.q) {
-			conditions.push("(papers.title LIKE ? OR papers.description LIKE ?)");
+			conditions.push("(papers.paper_name LIKE ? OR papers.description LIKE ?)");
 			params.push(`%${String(filters.q)}%`, `%${String(filters.q)}%`);
 		}
 
-		// Append WHERE conditions correctly
-		query += ` WHERE ${conditions.join(" AND ")}`;
-
-		// Pagination
+		query += ` WHERE ${conditions.join(" AND papers.deleted = 0 AND ")}`;
 		query += " ORDER BY papers.created_at DESC LIMIT ? OFFSET ?";
 		params.push(limit, offset);
 
-		// Execute query
 		const stmt = db.prepare(query);
 		return stmt.all(...params);
 	} catch (error) {
@@ -181,6 +185,7 @@ const getPapers = (filters, offset = 0, limit = 30) => {
 		return null;
 	}
 };
+
 const getPaperById = (paperId) => {
 	try {
 		const stmt = db.prepare("SELECT * FROM papers WHERE paper_id = ? AND deleted = 0");
@@ -250,4 +255,5 @@ module.exports = {
 	getPaperById,
 	deletePaper,
 	getPapersByUserId,
+	getPaperObjectById,
 };

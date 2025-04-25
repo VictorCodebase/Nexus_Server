@@ -2,8 +2,8 @@ const express = require("express");
 const router = express.Router();
 const paperController = require("../controllers/paperController");
 const { verifyToken, checkRole } = require("../middleware/authMiddleware");
-const { upload, localstore } = require("../config/multerConfig");
 const { ensurePathExists } = require("../middleware/pathMiddleware");
+const { upload, localstore } = require("../config/multerConfig");
 // const multer = require("multer");
 
 router.post(
@@ -41,10 +41,12 @@ router.get("", paperController.getPapers);
 router.get("/:id", paperController.getPaperById);
 
 
-// router.get("/:id", paperController.getPaperById);
+//? Chenge to this to ensure paper ownship. you could test it out :)
+// router.put("/", verifyToken, checkRole(["author", "admin"]), checkPaperAccess("edit"), paperController.updateLocalPaper);
+// router.delete("/:id", verifyToken, checkRole(["admin", "author"]), checkPaperAccess("delete"), paperController.deletePaper);
+router.put("/", verifyToken, checkRole(["author", "admin"]), paperController.updateLocalPaper);
+router.delete("/:id", verifyToken, checkRole(["admin", "author"]), paperController.deletePaper);
 
-router.put("/", verifyToken, paperController.updateLocalPaper);
-router.delete("/:id", verifyToken, paperController.deletePaper);
 
 //get papers according to user id
 router.get("/user", verifyToken, paperController.getUserPapers);

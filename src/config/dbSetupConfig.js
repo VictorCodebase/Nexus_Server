@@ -34,7 +34,6 @@ function setupDb() {
 
 			CREATE TABLE IF NOT EXISTS tags (
 				tag_id INTEGER PRIMARY KEY AUTOINCREMENT,
-				field TEXT NOT NULL,
 				tag TEXT UNIQUE NOT NULL
 			);
 
@@ -54,6 +53,7 @@ function setupDb() {
 				file_url TEXT NOT NULL,
 				description TEXT,
 				meta TEXT,
+				tags TEXT,
 				created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 				deleted INTEGER NOT NULL DEFAULT 0 CHECK (deleted IN (0,1)),

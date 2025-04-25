@@ -23,8 +23,11 @@ const localUploadPaper = (req, res) => {
 	const fileUrl = req.fileUrl;
 	const fileName = req.body.name;
 	const category = req.body.category;
+
 	const publisher = req.body.publisher;
 	// since they are being assigned values
+	
+
 	let coauthors = req.body.coauthors || '[]'
 	let tags = req.body.tags || '[]';
 
@@ -33,23 +36,11 @@ const localUploadPaper = (req, res) => {
 
 	console.log(req.body);
 
-	if (typeof tags === "string") {
-		try{
-			tags = JSON.parse(tags);
-		}
-		catch (error) {
-			console.error("Error parsing tags: ", error);
-			return res.status(400).json({ error: "Error parsing tags" });
-		}
-	}
-	if (typeof coauthors === "string") {
-		try{
-			coauthors = JSON.parse(coauthors);
-		}
-		catch (error) {
-			console.error("Error parsing coauthors: ", error);
-			return res.status(400).json({ error: "Error parsing coauthors" });
-		}
+	try {
+		if (typeof tags === "string") tags = JSON.parse(tags);
+		if (typeof coauthors === "string") coauthors = JSON.parse(coauthors);
+	} catch (err) {
+		return res.status(400).json({ error: "Error parsing tags or coauthors" });
 	}
 
 	// if (tags) tags = JSON.parse(tags);
@@ -96,7 +87,7 @@ const updateLocalPaper = (req, res) => {
 			console.error("Error updating paper. Paper:", updatedPaper)
 			return res.status(500).json({ error: "error occured updating file" });
 		}
-		res.json({
+		return res.json({ 
 			message: "success",
 			paper: updatedPaper,
 		});
@@ -105,9 +96,6 @@ const updateLocalPaper = (req, res) => {
 		return res.status(500).json({ error: err.message });
 	}
 
-	console.log("Update body: ", req.body);
-
-	res.status(500).json({ message: "Method reached; still under development" });
 };
 
 const getPapers = (req, res) => {
