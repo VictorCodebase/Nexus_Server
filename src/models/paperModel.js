@@ -119,7 +119,7 @@ const updatePaper = (paper_id, fields = {}) => {
 };
 
 const getPaperObjectById = (id) => {
-	const stmt = db.prepare("SELECT * FROM papers WHERE paper_id = ?");
+	const stmt = db.prepare("SELECT * FROM papers WHERE paper_id = ? AND deleted = 0");
 	return stmt.get(id);
 };
 
@@ -255,4 +255,5 @@ module.exports = {
 	getPaperById,
 	deletePaper,
 	getPapersByUserId,
+	getPaperObjectById,
 };

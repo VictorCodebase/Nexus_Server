@@ -24,7 +24,6 @@ const localUploadPaper = (req, res) => {
 	const fileName = req.body.name;
 	const category = req.body.category;
 	const publisher = req.body.publish
-	// since they are being assigned values
 	let coauthors = req.body.coauthors || '[]'
 	let tags = req.body.tags || '[]';
 

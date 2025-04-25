@@ -27,25 +27,11 @@ const checkRole = (roles) => {
 			return res.status(403).json({ message: "Forbidden: You do not have access" });
 		}
 
-		if (userRole === "author") {
-			// TODO: Ensure the paper belongs to the author
-			// const test_paper = {
-			// 	authorId: 1,
-			// };
-			// if (!test_paper) {
-			// 	return res.status(404).json({ message: "Requested resource does not exist" });
-			// }
-
-			// if (test_paper.authorId !== Number(req.params.id)) {
-			// 	return res.status(403).json({ message: "Forbidden: You can only modify your papers" });
-			// }
-
+		if (userRole === "author" || userRole === "admin") {
 			next();
-		} else if (userRole === "admin") {
-			return next();
 		} else {
-			console.warn(`unregistered role detected: ${userRole}`)
-			res.status(403).json({message: "forbidden: you do not have access"})
+			console.warn(`unregistered role detected: ${userRole}`);
+			res.status(403).json({ message: "forbidden: you do not have access" });
 		}
 	};
 };
