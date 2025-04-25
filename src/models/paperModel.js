@@ -33,6 +33,7 @@ const createPaper = (category_id, publisher_id, paper_name, file_url, descriptio
 			const allAuthors = new Set([Number(publisher_id), ...coauthors]);
 
 			coauthors.forEach((author) => {
+				author = Number(author)
 				const author_details = readUserById(author);
 				if (!author_details) {
 					throw new Error(`Added co-author id(${author}) does not exist`);

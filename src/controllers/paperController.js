@@ -23,7 +23,7 @@ const localUploadPaper = (req, res) => {
 	const fileUrl = req.fileUrl;
 	const fileName = req.body.name;
 	const category = req.body.category;
-	const publisher = req.body.publish
+	const publisher = req.body.publisher
 	let coauthors = req.body.coauthors || '[]'
 	let tags = req.body.tags || '[]';
 
@@ -35,6 +35,7 @@ const localUploadPaper = (req, res) => {
 	try {
 		if (typeof tags === "string") tags = JSON.parse(tags);
 		if (typeof coauthors === "string") coauthors = JSON.parse(coauthors);
+		coauthors = coauthors.map(Number);
 	} catch (err) {
 		return res.status(400).json({ error: "Error parsing tags or coauthors" });
 	}
@@ -52,6 +53,10 @@ const localUploadPaper = (req, res) => {
 	if (tags.length > 10) return res.status(400).json({ error: "Maximum number of tags associatable to a paper exceeded" });
 
 	const paper = paperModel.createPaper(category, publisher, fileName, fileUrl, description, meta, tags, coauthors);
+
+	console.log("Co-authors raw", coauthors);
+
+	
 
 	if (!paper) {
 		console.error("Paper creation failed: ", paper);
